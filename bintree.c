@@ -241,26 +241,3 @@ void freeTree(Node **root)
     traversalPostorder(*root, &freeNode, 0);
     root = NULL;
 }
-
-int main()
-{
-    // deletion example from http://habrahabr.ru/blogs/algorithm/65617/
-    Node *root = NULL;
-
-    int a[] = {33, 5, 1, 4, 20, 17, 31, 35, 99};
-    int i;
-    for (i = 0; i < 9; ++i)
-        insert(a[i], &root);
-
-    //print(root, 0);
-    /*removeNodeByData(5, root);
-    print(root, 0);*/
-
-    //printTree(root);
-    traversalLevelorder(root, &printNode); 
-
-    printf("%d\n", search(root, 31)->data);
-
-    freeTree(&root);
-    return 0;
-}
