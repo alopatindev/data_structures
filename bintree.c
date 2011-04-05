@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include "queue.h"
 
 Node *create(int data, Node *parent, Node *left, Node *right)
