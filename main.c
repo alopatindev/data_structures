@@ -1,5 +1,8 @@
 #include "bintree.h"
 #include <stdlib.h>
+#include "queue.h"
+#include <stdio.h>
+//#include <time.h>
 
 int main()
 {
@@ -11,11 +14,10 @@ int main()
     for (i = 0; i < 9; ++i)
         insert(a[i], &root);
 
-    removeNodeByData(5, root);
-    print(root, 0);
-
     printTree(root);
-    //traversalLevelorder(root, &printNode); 
+    //removeNodeByData(5, root);
+    //print(root, 0);
+    printTreeByLevel(root);
 
     freeTree(&root);
     return 0;

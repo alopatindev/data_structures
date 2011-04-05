@@ -31,11 +31,16 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
         return;
 
     QueueNode *n = (QueueNode *)malloc(sizeof(QueueNode));
+    if (n == NULL) {
+        printf("Error: can't allocate memory for the queue");
+        return;
+    }
     n->data = data;
+    n->next = NULL;
 
     if (q->tail == NULL) {
         q->tail = n;
-        q->head = q->tail;
+        q->head = n;
     } else {
         q->tail->next = n;
         q->tail = n;
@@ -50,23 +55,28 @@ QUEUE_DATA_TYPE popQueue(Queue *q)
     QUEUE_DATA_TYPE data = q->head->data;
     QueueNode *n = q->head->next;
     free(q->head);
+
     q->head = n;
+
+    if (q->head == NULL)
+        q->tail = NULL;
 
     return data;
 }
 
-/*void printQueue(Queue *q)
+void printQueue(Queue *q)
 {
     if (q == NULL)
         return;
 
     QueueNode *n = q->head;
     while (n) {
-        printf("%d ", n->data);
+        //printf("%d ", n->data);
+        printf("%d ", n->data->data);
         n = n->next;
     }
     printf("\n");
-}*/
+}
 
 int emptyQueue(Queue *q)
 {

@@ -4,6 +4,7 @@
 #include "bintree.h"
 
 #define QUEUE_DATA_TYPE Node*
+//#define QUEUE_DATA_TYPE int
 
 typedef struct QueueNodeStruct
 {
@@ -21,7 +22,7 @@ Queue *createQueue();
 void freeQueue(Queue **queue);
 void pushQueue(Queue *q, QUEUE_DATA_TYPE data);
 QUEUE_DATA_TYPE popQueue(Queue *q);
-//void printQueue(Queue *q);
+void printQueue(Queue *q);
 int emptyQueue(Queue *q);
 
 #endif

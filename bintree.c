@@ -98,14 +98,14 @@ void traversalPostorder(Node *root, void (*f)(Node *, int), int level)
     f(root, level);
 }
 
-// FIXME: buggy shit :(
 void traversalLevelorder(Node *root, void (*f)(Node *, int))
 {
-    int level;
+    int level = 0;  // TODO: calculate each node's level
     Queue *q = createQueue();
+    Node *n = NULL;
     pushQueue(q, root);
-    for (level = 0; !emptyQueue(q); ++level) {
-        Node *n = popQueue(q);
+    while (!emptyQueue(q)) {
+        n = popQueue(q);
         f(n, level);
         if (n->left != NULL)
             pushQueue(q, n->left);
@@ -224,7 +224,14 @@ void printNode(Node *node, int level)
 
 void printTree(Node *root)
 {
+    printf("\nPreorder traversal:\n");
     traversalPreorder(root, &printNode, 0);
+}
+
+void printTreeByLevel(Node *root)
+{
+    printf("\nQueue-based level order traversal:\n");
+    traversalLevelorder(root, &printNode); 
 }
 
 void freeNode(Node *node, int level)
