@@ -6,19 +6,20 @@
 
 int main()
 {
-    // deletion example from http://habrahabr.ru/blogs/algorithm/65617/
-    Node *root = NULL;
+    BinTree *tree = createBinTree();
+    if (tree == NULL)
+        return 1;
 
+    // deletion example from http://habrahabr.ru/blogs/algorithm/65617/
     int a[] = {33, 5, 1, 4, 20, 17, 31, 35, 99};
     int i;
     for (i = 0; i < 9; ++i)
-        insert(a[i], &root);
+        insert(a[i], tree);
 
-    printTree(root);
-    //removeNodeByData(5, root);
-    //print(root, 0);
-    printTreeByLevel(root);
+    printTree(tree);
+    removeNodeByData(5, tree);
+    printTreeByLevel(tree);
 
-    freeTree(&root);
+    freeTree(&tree);
     return 0;
 }

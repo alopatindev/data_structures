@@ -11,17 +11,22 @@ Queue *createQueue()
     return q;
 }
 
-void freeQueue(Queue **queue)
+void clearQueue(Queue *queue)
 {
-    if (queue == NULL)
+    if (queue == NULL || queue->size == 0)
         return;
 
-    QueueNode *q = (*queue)->head;
+    QueueNode *q = queue->head;
     while (q != NULL) {
-        (*queue)->head = (*queue)->head->next;
+        queue->head = queue->head->next;
         free(q);
-        q = (*queue)->head;
+        q = queue->head;
     }
+}
+
+void freeQueue(Queue **queue)
+{
+    clearQueue(*queue);
     free(*queue);
     *queue = NULL;
 }
@@ -33,7 +38,7 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
 
     QueueNode *n = (QueueNode *)malloc(sizeof(QueueNode));
     if (n == NULL) {
-        printf("Error: can't allocate memory for the queue");
+        fprintf(stderr, "Failed to allocate memory for the queue\n");
         return;
     }
     n->data = data;
@@ -83,21 +88,9 @@ void printQueue(Queue *q)
     printf("\n");
 }
 
-int emptyQueue(Queue *q)
+int isEmptyQueue(Queue *q)
 {
     //return q->head == q->tail == NULL;
-    return q->head == NULL;
+    //return q->head == NULL;
+    return q->size == 0;
 }
-
-/*int main()
-{
-    Queue *q = createQueue();
-    pushQueue(q, 1);
-    pushQueue(q, 2);
-    pushQueue(q, 3);
-    printQueue(q);
-    printf("first was: %d\n", popQueue(q));
-    printQueue(q);
-    freeQueue(&q);
-    return 0;
-}*/
