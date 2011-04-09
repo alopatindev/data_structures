@@ -7,6 +7,7 @@ Queue *createQueue()
     Queue *q = (Queue *)malloc(sizeof(Queue));
     q->head = NULL;
     q->tail = NULL;
+    q->size = 0;
     return q;
 }
 
@@ -45,6 +46,8 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
         q->tail->next = n;
         q->tail = n;
     }
+
+    ++(q->size);
 }
 
 QUEUE_DATA_TYPE popQueue(Queue *q)
@@ -60,6 +63,8 @@ QUEUE_DATA_TYPE popQueue(Queue *q)
 
     if (q->head == NULL)
         q->tail = NULL;
+
+    --(q->size);
 
     return data;
 }

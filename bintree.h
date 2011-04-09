@@ -9,7 +9,6 @@ typedef struct StructNode
     int data;
 } Node;
 
-
 Node *create(int data, Node *parent, Node *left, Node *right);
 void insert1(int data, Node **node, Node *parent);
 void insert(int data, Node **root);
