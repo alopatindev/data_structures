@@ -5,9 +5,15 @@
 Queue *createQueue()
 {
     Queue *q = (Queue *)malloc(sizeof(Queue));
+    if (q == NULL) {
+        fprintf(stderr, "Failed to allocate memory for a node\n");
+        return NULL;
+    }
+
     q->head = NULL;
     q->tail = NULL;
     q->size = 0;
+
     return q;
 }
 
@@ -38,7 +44,7 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
 
     QueueNode *n = (QueueNode *)malloc(sizeof(QueueNode));
     if (n == NULL) {
-        fprintf(stderr, "Failed to allocate memory for the queue\n");
+        fprintf(stderr, "Failed to allocate memory for the queue node\n");
         return;
     }
     n->data = data;

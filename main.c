@@ -17,7 +17,7 @@ int main()
         insertBinNode(a[i], tree);
 
     printBinTree(tree);
-    removeBinNodeByData(5, tree);
+    //removeBinNodeByData(5, tree);
     printBinTreeByLevel(tree);
 
     freeBinTree(&tree);

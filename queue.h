@@ -2,15 +2,12 @@
 #define QUEUE_H
 
 #include "bintree.h"
+#include "linkedlist.h"
 
 #define QUEUE_DATA_TYPE BinNode*
 //#define QUEUE_DATA_TYPE int
 
-typedef struct QueueNodeStruct
-{
-    QUEUE_DATA_TYPE data;
-    struct QueueNodeStruct *next;
-} QueueNode;
+LINKED_LIST(QUEUE_DATA_TYPE, QueueNode, StructQueueNode)
 
 typedef struct QueueStruct
 {
