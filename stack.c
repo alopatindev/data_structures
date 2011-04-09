@@ -16,14 +16,14 @@ Stack *createStack()
     return s;
 }
 
-void pushStack(Stack *stack, STACK_DATA_TYPE data)
+void pushStack(Stack *stack, STACK_DATA_TYPE *data)
 {
     StackNode *n = (StackNode *)malloc(sizeof(StackNode));
     if (n == NULL) {
         fprintf(stderr, "Failed to allocate memory for the stack node\n");
         return;
     }
-    n->data = data;
+    n->data = *data;
     
     StackNode *head = stack->head;
     n->next = head;
@@ -36,13 +36,10 @@ STACK_DATA_TYPE *popStack(Stack *stack)
     if (stack->size == 0 || stack->head == NULL)
         return NULL;
 
-    //STACK_DATA_TYPE data = stack->head->data;
     STACK_DATA_TYPE *head = (STACK_DATA_TYPE *)stack->head;
     stack->head = stack->head->next;
-    //free(head);
     --(stack->size);
 
-    //return data;
     return head;
 }
 

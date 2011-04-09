@@ -16,7 +16,7 @@ typedef struct
 } Stack;
 
 Stack *createStack();
-void pushStack(Stack *stack, STACK_DATA_TYPE data);
+void pushStack(Stack *stack, STACK_DATA_TYPE *data);
 STACK_DATA_TYPE *popStack(Stack *stack);
 //void printStack(Stack *stack);
 void clearStack(Stack *stack);

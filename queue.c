@@ -37,7 +37,7 @@ void freeQueue(Queue **queue)
     *queue = NULL;
 }
 
-void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
+void pushQueue(Queue *q, QUEUE_DATA_TYPE *data)
 {
     if (q == NULL)
         return;
@@ -47,7 +47,7 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
         fprintf(stderr, "Failed to allocate memory for the queue node\n");
         return;
     }
-    n->data = data;
+    n->data = *data;
     n->next = NULL;
 
     if (q->tail == NULL) {
@@ -61,16 +61,13 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
     ++(q->size);
 }
 
-//QUEUE_DATA_TYPE popQueue(Queue *q)
 QUEUE_DATA_TYPE *popQueue(Queue *q)
 {
     if (q == NULL || q->head == NULL)
         return NULL;
 
-    //QUEUE_DATA_TYPE data = q->head->data;
     QUEUE_DATA_TYPE *data = (QUEUE_DATA_TYPE *)q->head;
     QueueNode *n = q->head->next;
-    //free(q->head);
 
     q->head = n;
 
@@ -98,7 +95,5 @@ QUEUE_DATA_TYPE *popQueue(Queue *q)
 
 int isEmptyQueue(Queue *q)
 {
-    //return q->head == q->tail == NULL;
-    //return q->head == NULL;
     return q->size == 0;
 }

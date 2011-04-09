@@ -10,8 +10,10 @@ BinTree *createBinTree()
         fprintf(stderr, "Failed to allocate memory for a binary tree\n");
         return NULL;
     }
+
     tree->root = NULL;
     tree->size = 0;
+
     return tree;
 }
 
@@ -80,7 +82,7 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     Stack *s = createStack();
     Pair *p = createPair(root, 0);
-    pushStack(s, *p);
+    pushStack(s, p);
     free(p);
 
     while (!isEmptyStack(s))
@@ -94,14 +96,14 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
 
         if (node->right != NULL) {
             p = createPair(node->right, level + 1);
-            pushStack(s, *p);
+            pushStack(s, p);
             free(p);
         } else {
             f(NULL, level + 1);
         }
         if (node->left != NULL) {
             p = createPair(node->left, level + 1);
-            pushStack(s, *p);
+            pushStack(s, p);
             free(p);
         } else {
             f(NULL, level + 1);
@@ -136,7 +138,7 @@ void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int))
 {
     Queue *q = createQueue();
     Pair *p = createPair(root, 0);
-    pushQueue(q, *p);
+    pushQueue(q, p);
     free(p);
     while (!isEmptyQueue(q)) {
         p = popQueue(q);
@@ -146,14 +148,14 @@ void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int))
         free(p);
         if (node->left != NULL) {
             p = createPair(node->left, level + 1);
-            pushQueue(q, *p);
+            pushQueue(q, p);
             free(p);
         } else {
             f(NULL, level + 1);
         }
         if (node->right != NULL) {
             p = createPair(node->right, level + 1);
-            pushQueue(q, *p);
+            pushQueue(q, p);
             free(p);
         } else {
             f(NULL, level + 1);

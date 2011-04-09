@@ -20,7 +20,7 @@ typedef struct QueueStruct
 Queue *createQueue();
 void clearQueue(Queue *queue);
 void freeQueue(Queue **queue);
-void pushQueue(Queue *q, QUEUE_DATA_TYPE data);
+void pushQueue(Queue *q, QUEUE_DATA_TYPE *data);
 QUEUE_DATA_TYPE *popQueue(Queue *q);
 //void printQueue(Queue *q);
 int isEmptyQueue(Queue *q);
