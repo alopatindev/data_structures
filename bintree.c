@@ -86,9 +86,9 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
     while (!isEmptyStack(s))
     {
         p = popStack(s);
-        free(p);
         BinNode *node = p->first;
         int level = p->second;
+        free(p);
 
         f(node, level);
 
@@ -134,17 +134,30 @@ void traversalPostorder(BinNode *root, void (*f)(BinNode *, int), int level)
 
 void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int))
 {
-    int level = 0;  // TODO: calculate each node's level
     Queue *q = createQueue();
-    BinNode *n = NULL;
-    pushQueue(q, root);
+    Pair *p = createPair(root, 0);
+    pushQueue(q, *p);
+    free(p);
     while (!isEmptyQueue(q)) {
-        n = popQueue(q);
-        f(n, level);
-        if (n->left != NULL)
-            pushQueue(q, n->left);
-        if (n->right != NULL)
-            pushQueue(q, n->right);
+        p = popQueue(q);
+        BinNode *node = p->first;
+        int level = p->second;
+        f(node, level);
+        free(p);
+        if (node->left != NULL) {
+            p = createPair(node->left, level + 1);
+            pushQueue(q, *p);
+            free(p);
+        } else {
+            f(NULL, level + 1);
+        }
+        if (node->right != NULL) {
+            p = createPair(node->right, level + 1);
+            pushQueue(q, *p);
+            free(p);
+        } else {
+            f(NULL, level + 1);
+        }
     }
     freeQueue(&q);
 }

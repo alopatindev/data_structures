@@ -61,14 +61,16 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
     ++(q->size);
 }
 
-QUEUE_DATA_TYPE popQueue(Queue *q)
+//QUEUE_DATA_TYPE popQueue(Queue *q)
+QUEUE_DATA_TYPE *popQueue(Queue *q)
 {
     if (q == NULL || q->head == NULL)
         return NULL;
 
-    QUEUE_DATA_TYPE data = q->head->data;
+    //QUEUE_DATA_TYPE data = q->head->data;
+    QUEUE_DATA_TYPE *data = (QUEUE_DATA_TYPE *)q->head;
     QueueNode *n = q->head->next;
-    free(q->head);
+    //free(q->head);
 
     q->head = n;
 
@@ -80,7 +82,7 @@ QUEUE_DATA_TYPE popQueue(Queue *q)
     return data;
 }
 
-void printQueue(Queue *q)
+/*void printQueue(Queue *q)
 {
     if (q == NULL)
         return;
@@ -88,11 +90,11 @@ void printQueue(Queue *q)
     QueueNode *n = q->head;
     while (n) {
         //printf("%d ", n->data);
-        printf("%d ", n->data->data);
+        printf("%d ", n->data);
         n = n->next;
     }
     printf("\n");
-}
+}*/
 
 int isEmptyQueue(Queue *q)
 {
