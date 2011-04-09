@@ -58,7 +58,7 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE data)
 QUEUE_DATA_TYPE popQueue(Queue *q)
 {
     if (q == NULL || q->head == NULL)
-        return;
+        return NULL;
 
     QUEUE_DATA_TYPE data = q->head->data;
     QueueNode *n = q->head->next;

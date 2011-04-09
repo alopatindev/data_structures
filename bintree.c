@@ -14,11 +14,11 @@ BinTree *createBinTree()
     return tree;
 }
 
-Node *createNode(int data, Node *parent, Node *left, Node *right)
+Node *createBinNode(int data, Node *parent, Node *left, Node *right)
 {
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL) {
-        fprintf(stderr, "Failed to allocate memory for a node\n");
+        fprintf(stderr, "Failed to allocate memory for a binary node\n");
         return NULL;
     }
 
@@ -36,7 +36,7 @@ void insert1(int data, Node **node, Node *parent)
         return;
 
     if (*node == NULL) {
-        *node = createNode(data, parent, NULL, NULL);
+        *node = createBinNode(data, parent, NULL, NULL);
         return;
     }
 
@@ -46,7 +46,7 @@ void insert1(int data, Node **node, Node *parent)
         insert1(data, &((*node)->right), *node);
 }
 
-void insert(int data, BinTree *tree)
+void insertBinNode(int data, BinTree *tree)
 {
     Node **root = &(tree->root);
 
@@ -54,7 +54,7 @@ void insert(int data, BinTree *tree)
         return;
 
     if (*root == NULL) {
-        *root = createNode(data, NULL, NULL, NULL);
+        *root = createBinNode(data, NULL, NULL, NULL);
         if (*root == NULL)
             return;
     } else {
@@ -62,22 +62,6 @@ void insert(int data, BinTree *tree)
     }
 
     ++(tree->size);
-}
-
-void print(Node *node, int tab)
-{
-    int i;
-    for (i = 0; i < tab; ++i)
-        printf(" ");
-
-    if (node == NULL) {
-        printf("NULL\n");
-        return;
-    }
-
-    printf("%d\n", node->data);
-    print(node->left, tab + TABWIDTH);
-    print(node->right, tab + TABWIDTH);
 }
 
 void traversalPreorder(Node *root, void (*f)(Node *, int), int level)
@@ -152,16 +136,12 @@ Node *search(Node *root, int data)
     return root;
 }
 
-inline int hasLeft(Node *node) { return node->left != NULL; }
-inline int hasRight(Node *node) { return node->right != NULL; }
-inline int isLeaf(Node *node) { return !hasLeft(node) && !hasRight(node); }
-
 Node *findMin(Node *node)
 {
     if (node == NULL)
         return NULL;
 
-    while (hasLeft(node))
+    while (HAS_LEFT(node))
         node = node->left;
     return node;
 }
@@ -184,25 +164,25 @@ void updateParent(Node **node, Node *value)
         value->parent = (*node)->parent;
 }
 
-void removeNode(Node **node, BinTree *tree)
+void removeBinNode(Node **node, BinTree *tree)
 {
     if (node == NULL || *node == NULL)
         return;
 
-    if (isLeaf(*node)) {
+    if (IS_LEAF(*node)) {
         // 1. Deleting a leaf (node with no children):
         // Deleting a leaf is easy, as we can simply remove it from the tree.
         updateParent(node, NULL);
-        free(*node);
-    } else if (hasLeft(*node) && !hasRight(*node)) {
+        free((void *)*node);
+    } else if (HAS_LEFT(*node) && !HAS_RIGHT(*node)) {
         // 2. Deleting a node with one child:
         // Remove the node and replace it with its child.
         updateParent(node, (*node)->left);
-        free(*node);
-    } else if (!hasLeft(*node) && hasRight(*node)) {
+        free((void *)*node);
+    } else if (!HAS_LEFT(*node) && HAS_RIGHT(*node)) {
         updateParent(node, (*node)->right);
-        free(*node);
-    } else {  //  hasLeft(*node) && hasRight(*node)
+        free((void *)*node);
+    } else {  //  HAS_LEFT(*node) && HAS_RIGHT(*node)
         // 3. Deleting a node with two children:
         // Do not delete "node". Find the smallest (the leftest) child of
         // the right node's subtree (call him "m") and copy from "m" to "node"
@@ -210,23 +190,23 @@ void removeNode(Node **node, BinTree *tree)
         // Remove m.
         Node *m = findMin((*node)->right);
         (*node)->data = m->data;
-        removeNode(&m, tree);
+        removeBinNode(&m, tree);
     }
 
     --(tree->size);
 }
 
-void removeNodeByData(int data, BinTree *tree)
+void removeBinNodeByData(int data, BinTree *tree)
 {
     Node *f = search(tree->root, data);
 
     if (f == NULL)
         fprintf(stderr, "Unable to find node %d\n", data);
     else
-        removeNode(&f, tree);
+        removeBinNode(&f, tree);
 }
 
-void printNode(Node *node, int level)
+void printBinNode(Node *node, int level)
 {
     int i;
     //for (i = 0; i < level * TABWIDTH; ++i)
@@ -239,37 +219,37 @@ void printNode(Node *node, int level)
         printf("%d\n", node->data);
 }
 
-void printTree(BinTree *tree)
+void printBinTree(BinTree *tree)
 {
     printf("\nPreorder traversal:\n");
-    traversalPreorder(tree->root, &printNode, 0);
+    traversalPreorder(tree->root, &printBinNode, 0);
 }
 
-void printTreeByLevel(BinTree *tree)
+void printBinTreeByLevel(BinTree *tree)
 {
     printf("\nQueue-based level order traversal:\n");
-    traversalLevelorder(tree->root, &printNode); 
+    traversalLevelorder(tree->root, &printBinNode); 
 }
 
-void freeNode(Node *node, int level)
+void freeBinNode(Node *node, int level)
 {
     if (node != NULL)
-        free(node);
+        free((void *)node);
 }
 
-void clearTree(BinTree *tree)
+void clearBinTree(BinTree *tree)
 {
     if (tree == NULL || tree->root == NULL || tree->size == 0)
         return;
 
-    traversalPostorder(tree->root, &freeNode, 0);
+    traversalPostorder(tree->root, &freeBinNode, 0);
     tree->size = 0;
 }
 
-void freeTree(BinTree **tree)
+void freeBinTree(BinTree **tree)
 {
-    clearTree(*tree);
-    free(*tree);
+    clearBinTree(*tree);
+    free((void *)*tree);
     tree = NULL;
 }
 

@@ -14,12 +14,12 @@ int main()
     int a[] = {33, 5, 1, 4, 20, 17, 31, 35, 99};
     int i;
     for (i = 0; i < 9; ++i)
-        insert(a[i], tree);
+        insertBinNode(a[i], tree);
 
-    printTree(tree);
-    removeNodeByData(5, tree);
-    printTreeByLevel(tree);
+    printBinTree(tree);
+    removeBinNodeByData(5, tree);
+    printBinTreeByLevel(tree);
 
-    freeTree(&tree);
+    freeBinTree(&tree);
     return 0;
 }
