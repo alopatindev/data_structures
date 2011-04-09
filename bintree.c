@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "queue.h"
+#include "stack.h"
 
 BinTree *createBinTree()
 {
@@ -64,7 +65,7 @@ void insertBinNode(int data, BinTree *tree)
     ++(tree->size);
 }
 
-void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
+/*void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     f(root, level);
 
@@ -73,11 +74,26 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
 
     traversalPreorder(root->left, f, level + 1);
     traversalPreorder(root->right, f, level + 1);
-}
-
-/*void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
-{
 }*/
+
+void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
+{
+    Stack *s = createStack();
+    pushStack(s, root);
+
+    while (!isEmptyStack(s))
+    {
+        BinNode *n = popStack(s);
+        f(n, level);
+
+        if (n->right != NULL)
+            pushStack(s, n->right);
+        if (n->left != NULL)
+            pushStack(s, n->left);
+    }
+
+    freeStack(&s);
+}
 
 void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {

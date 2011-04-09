@@ -58,9 +58,14 @@ STACK_DATA_TYPE popStack(Stack *stack)
     printf("\n");
 }*/
 
+int isEmptyStack(Stack *stack)
+{
+    return stack->size == 0;
+}
+
 void clearStack(Stack *stack)
 {
-    if (stack == NULL)
+    if (stack == NULL || stack->head == NULL)
         return;
 
     StackNode *s = stack->head;
