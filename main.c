@@ -18,7 +18,7 @@ int main()
 
     printBinTree(tree);
     //removeBinNodeByData(5, tree);
-    printBinTreeByLevel(tree);
+    //printBinTreeByLevel(tree);
 
     freeBinTree(&tree);
     return 0;

@@ -21,6 +21,9 @@ typedef struct
     size_t size;
 } BinTree;
 
+#include "extra/pair.h"
+PAIR(BinNode *, int, Pair)
+
 BinTree *createBinTree();
 void printBinTree(BinTree *tree);
 void printBinTreeByLevel(BinTree *tree);

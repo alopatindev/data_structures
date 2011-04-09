@@ -79,19 +79,34 @@ void insertBinNode(int data, BinTree *tree)
 void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     Stack *s = createStack();
-    pushStack(s, root);
+    Pair *p = createPair(root, 0);
+    pushStack(s, *p);
+    free(p);
 
     while (!isEmptyStack(s))
     {
-        BinNode *n = popStack(s);
-        f(n, level);
+        p = popStack(s);
+        free(p);
+        BinNode *node = p->first;
+        int level = p->second;
 
-        if (n->right != NULL)
-            pushStack(s, n->right);
-        if (n->left != NULL)
-            pushStack(s, n->left);
+        f(node, level);
+
+        if (node->right != NULL) {
+            p = createPair(node->right, level + 1);
+            pushStack(s, *p);
+            free(p);
+        } else {
+            f(NULL, level + 1);
+        }
+        if (node->left != NULL) {
+            p = createPair(node->left, level + 1);
+            pushStack(s, *p);
+            free(p);
+        } else {
+            f(NULL, level + 1);
+        }
     }
-
     freeStack(&s);
 }
 

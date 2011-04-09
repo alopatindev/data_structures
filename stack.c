@@ -31,18 +31,19 @@ void pushStack(Stack *stack, STACK_DATA_TYPE data)
     ++(stack->size);
 }
 
-STACK_DATA_TYPE popStack(Stack *stack)
+STACK_DATA_TYPE *popStack(Stack *stack)
 {
     if (stack->size == 0 || stack->head == NULL)
         return NULL;
 
-    STACK_DATA_TYPE data = stack->head->data;
-    StackNode *head = stack->head;
+    //STACK_DATA_TYPE data = stack->head->data;
+    STACK_DATA_TYPE *head = (STACK_DATA_TYPE *)stack->head;
     stack->head = stack->head->next;
-    free(head);
+    //free(head);
     --(stack->size);
 
-    return data;
+    //return data;
+    return head;
 }
 
 /*void printStack(Stack *stack)
