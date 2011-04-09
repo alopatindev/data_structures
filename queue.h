@@ -3,7 +3,7 @@
 
 #include "bintree.h"
 
-#define QUEUE_DATA_TYPE Node*
+#define QUEUE_DATA_TYPE BinNode*
 //#define QUEUE_DATA_TYPE int
 
 typedef struct QueueNodeStruct

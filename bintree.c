@@ -14,9 +14,9 @@ BinTree *createBinTree()
     return tree;
 }
 
-Node *createBinNode(int data, Node *parent, Node *left, Node *right)
+BinNode *createBinNode(int data, BinNode *parent, BinNode *left, BinNode *right)
 {
-    Node *node = (Node *)malloc(sizeof(Node));
+    BinNode *node = (BinNode *)malloc(sizeof(BinNode));
     if (node == NULL) {
         fprintf(stderr, "Failed to allocate memory for a binary node\n");
         return NULL;
@@ -30,7 +30,7 @@ Node *createBinNode(int data, Node *parent, Node *left, Node *right)
     return node;
 }
 
-void insert1(int data, Node **node, Node *parent)
+void insert1(int data, BinNode **node, BinNode *parent)
 {
     if (node == NULL)
         return;
@@ -48,7 +48,7 @@ void insert1(int data, Node **node, Node *parent)
 
 void insertBinNode(int data, BinTree *tree)
 {
-    Node **root = &(tree->root);
+    BinNode **root = &(tree->root);
 
     if (root == NULL)
         return;
@@ -64,7 +64,7 @@ void insertBinNode(int data, BinTree *tree)
     ++(tree->size);
 }
 
-void traversalPreorder(Node *root, void (*f)(Node *, int), int level)
+void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     f(root, level);
 
@@ -75,7 +75,11 @@ void traversalPreorder(Node *root, void (*f)(Node *, int), int level)
     traversalPreorder(root->right, f, level + 1);
 }
 
-void traversalInorder(Node *root, void (*f)(Node *, int), int level)
+/*void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
+{
+}*/
+
+void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     if (root != NULL)
         traversalInorder(root->left, f, level);
@@ -86,7 +90,7 @@ void traversalInorder(Node *root, void (*f)(Node *, int), int level)
         traversalInorder(root->right, f, level);
 }
 
-void traversalPostorder(Node *root, void (*f)(Node *, int), int level)
+void traversalPostorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     if (root != NULL)
         traversalInorder(root->left, f, level);
@@ -97,11 +101,11 @@ void traversalPostorder(Node *root, void (*f)(Node *, int), int level)
     f(root, level);
 }
 
-void traversalLevelorder(Node *root, void (*f)(Node *, int))
+void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int))
 {
     int level = 0;  // TODO: calculate each node's level
     Queue *q = createQueue();
-    Node *n = NULL;
+    BinNode *n = NULL;
     pushQueue(q, root);
     while (!isEmptyQueue(q)) {
         n = popQueue(q);
@@ -114,7 +118,7 @@ void traversalLevelorder(Node *root, void (*f)(Node *, int))
     freeQueue(&q);
 }
 
-/*Node *search(Node *root, int data)
+/*BinNode *search(BinNode *root, int data)
 {
     if (root == NULL || root->data == data)
         return root;
@@ -125,7 +129,7 @@ void traversalLevelorder(Node *root, void (*f)(Node *, int))
         return search(root->right, data);
 }*/
 
-Node *search(Node *root, int data)
+BinNode *search(BinNode *root, int data)
 {
     while (root != NULL && root->data != data) {
         if (root->data > data)
@@ -136,7 +140,7 @@ Node *search(Node *root, int data)
     return root;
 }
 
-Node *findMin(Node *node)
+BinNode *findMin(BinNode *node)
 {
     if (node == NULL)
         return NULL;
@@ -147,7 +151,7 @@ Node *findMin(Node *node)
 }
 
 // updates parent's pointer before removal
-void updateParent(Node **node, Node *value)
+void updateParent(BinNode **node, BinNode *value)
 {
     if (node == NULL)
         return;
@@ -164,7 +168,7 @@ void updateParent(Node **node, Node *value)
         value->parent = (*node)->parent;
 }
 
-void removeBinNode(Node **node, BinTree *tree)
+void removeBinNode(BinNode **node, BinTree *tree)
 {
     if (node == NULL || *node == NULL)
         return;
@@ -188,7 +192,7 @@ void removeBinNode(Node **node, BinTree *tree)
         // the right node's subtree (call him "m") and copy from "m" to "node"
         // all data (not including left, right or parent pointers) to "node".
         // Remove m.
-        Node *m = findMin((*node)->right);
+        BinNode *m = findMin((*node)->right);
         (*node)->data = m->data;
         removeBinNode(&m, tree);
     }
@@ -198,7 +202,7 @@ void removeBinNode(Node **node, BinTree *tree)
 
 void removeBinNodeByData(int data, BinTree *tree)
 {
-    Node *f = search(tree->root, data);
+    BinNode *f = search(tree->root, data);
 
     if (f == NULL)
         fprintf(stderr, "Unable to find node %d\n", data);
@@ -206,7 +210,7 @@ void removeBinNodeByData(int data, BinTree *tree)
         removeBinNode(&f, tree);
 }
 
-void printBinNode(Node *node, int level)
+void printBinNode(BinNode *node, int level)
 {
     int i;
     //for (i = 0; i < level * TABWIDTH; ++i)
@@ -231,7 +235,7 @@ void printBinTreeByLevel(BinTree *tree)
     traversalLevelorder(tree->root, &printBinNode); 
 }
 
-void freeBinNode(Node *node, int level)
+void freeBinNode(BinNode *node, int level)
 {
     if (node != NULL)
         free((void *)node);
