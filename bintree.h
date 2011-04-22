@@ -35,9 +35,9 @@ void clearBinTree(BinTree *tree);
 void freeBinTree(BinTree **tree);
 int isEmptyBinTree(BinTree *tree);
 
-void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level);
-void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level);
-void traversalPostorder(BinNode *root, void (*f)(BinNode *, int), int level);
+void traversalPreorder(BinNode *root, void (*f)(BinNode *, int));
+void traversalInorder(BinNode *root, void (*f)(BinNode *, int));
+void traversalPostorder(BinNode *root, void (*f)(BinNode *, int));
 void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int));
 
 BinNode *createBinNode(int data, BinNode *parent,
