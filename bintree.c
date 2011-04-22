@@ -126,10 +126,10 @@ void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
 void traversalPostorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     if (root != NULL)
-        traversalInorder(root->left, f, level + 1);
+        traversalPostorder(root->left, f, level + 1);
     
     if (root != NULL)
-        traversalInorder(root->right, f, level + 1);
+        traversalPostorder(root->right, f, level + 1);
 
     f(root, level);
 }
