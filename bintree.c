@@ -76,6 +76,17 @@ void insertBinNode(int data, BinTree *tree)
 
     traversalPreorder(root->left, f, level + 1);
     traversalPreorder(root->right, f, level + 1);
+}
+
+void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
+{
+    if (root != NULL)
+        traversalInorder(root->left, f, level + 1);
+    
+    f(root, level);
+
+    if (root != NULL)
+        traversalInorder(root->right, f, level + 1);
 }*/
 
 void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
@@ -114,13 +125,36 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
 
 void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
-    if (root != NULL)
-        traversalInorder(root->left, f, level + 1);
-    
-    f(root, level);
+    Stack *s = createStack();
+    Pair *p;
+    BinNode *node = root;
+    level = -1;
 
-    if (root != NULL)
-        traversalInorder(root->right, f, level + 1);
+    for (;;) {
+        if (node != NULL) {
+            p = createPair(node, level + 1);
+            pushStack(s, p);
+            free(p);
+            node = node->left;
+            ++level;
+            continue;
+        } else {
+            f(NULL, level + 1);
+        }
+        
+        if (isEmptyStack(s))
+            break;
+
+        p = popStack(s);
+        node = p->first;
+        level = p->second;
+        free(p);
+
+        f(node, level);
+
+        node = node->right;
+    }
+    freeStack(&s);
 }
 
 void traversalPostorder(BinNode *root, void (*f)(BinNode *, int), int level)
