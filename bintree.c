@@ -67,26 +67,26 @@ void insertBinNode(int data, BinTree *tree)
     ++(tree->size);
 }
 
-/*void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
+/*void traversalPreorderRecursive(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     f(root, level);
 
     if (root == NULL)
         return;
 
-    traversalPreorder(root->left, f, level + 1);
-    traversalPreorder(root->right, f, level + 1);
+    traversalPreorderRecursive(root->left, f, level + 1);
+    traversalPreorderRecursive(root->right, f, level + 1);
 }
 
-void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
+void traversalInorderRecursive(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     if (root != NULL)
-        traversalInorder(root->left, f, level + 1);
+        traversalInorderRecursive(root->left, f, level + 1);
     
     f(root, level);
 
     if (root != NULL)
-        traversalInorder(root->right, f, level + 1);
+        traversalInorderRecursive(root->right, f, level + 1);
 }*/
 
 void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
@@ -123,7 +123,7 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int), int level)
     freeStack(&s);
 }
 
-void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
+/*void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
 {
     Stack *s = createStack();
     Pair *p;
@@ -154,6 +154,35 @@ void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
 
         node = node->right;
     }
+    freeStack(&s);
+}*/
+
+void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
+{
+    Stack *s = createStack();
+    Pair *p;
+    BinNode *node = root;
+    level = -1;
+
+    while (!isEmptyStack(s) || node != NULL)
+    {
+        if (node != NULL) {
+            p = createPair(node, level + 1);
+            pushStack(s, p);
+            node = node->left;
+            free(p);
+            ++level;
+        } else {
+            f(NULL, level + 1);
+            p = popStack(s);
+            node = p->first;
+            level = p->second;
+            free(p);
+            f(node, level);
+            node = node->right;
+        }
+    }
+    f(NULL, level + 1);
     freeStack(&s);
 }
 
