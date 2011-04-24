@@ -254,7 +254,7 @@ void traversalPostorder(BinNode *root, void (*f)(BinNode *, int))
     freeStack(&s);
 }
 
-void traversalheightorder(BinNode *root, void (*f)(BinNode *, int))
+void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int))
 {
     Queue *q = createQueue();
     Pair *p = createPair(root, 0);
@@ -398,7 +398,7 @@ void printBinTree(BinTree *tree)
 void printBinTreeByheight(BinTree *tree)
 {
     printf("\nQueue-based height order traversal:\n");
-    traversalheightorder(tree->root, &printBinNode); 
+    traversalLevelorder(tree->root, &printBinNode); 
 }
 
 void freeBinNode(BinNode *node, int height)
