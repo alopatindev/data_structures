@@ -18,7 +18,8 @@ typedef struct StructNode
 typedef struct
 {
     BinNode *root;
-    size_t size;
+    int size;
+    int height;
 } BinTree;
 
 #include "extra/pair.h"
@@ -26,7 +27,7 @@ PAIR(BinNode *, int, Pair)
 
 BinTree *createBinTree();
 void printBinTree(BinTree *tree);
-void printBinTreeByLevel(BinTree *tree);
+void printBinTreeByheight(BinTree *tree);
 void insertBinNode(int data, BinTree *tree);
 BinNode *search(BinNode *root, int data);
 void removeBinNode(BinNode **node, BinTree *tree);
@@ -38,13 +39,13 @@ int isEmptyBinTree(BinTree *tree);
 void traversalPreorder(BinNode *root, void (*f)(BinNode *, int));
 void traversalInorder(BinNode *root, void (*f)(BinNode *, int));
 void traversalPostorder(BinNode *root, void (*f)(BinNode *, int));
-void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int));
+void traversalheightorder(BinNode *root, void (*f)(BinNode *, int));
 
 BinNode *createBinNode(int data, BinNode *parent,
                        BinNode *left, BinNode *right);
 BinNode *findMin(BinNode *node);
 void updateParent(BinNode **node, BinNode *value);
-void printBinNode(BinNode *node, int level);
-void freeBinNode(BinNode *node, int level);
+void printBinNode(BinNode *node, int height);
+void freeBinNode(BinNode *node, int height);
 
 #endif

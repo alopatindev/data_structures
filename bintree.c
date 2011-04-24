@@ -13,6 +13,7 @@ BinTree *createBinTree()
 
     tree->root = NULL;
     tree->size = 0;
+    tree->height = -1;
 
     return tree;
 }
@@ -71,70 +72,78 @@ void insertBinNode(int data, BinTree *tree)
 {
     if (tree->root == NULL) {
         tree->root = createBinNode(data, NULL, NULL, NULL);
+        tree->height = 0;
     } else {
         BinNode *node = tree->root, *parent = NULL;
-        while (node != NULL) {
+
+        int height;
+        for (height = 0; node != NULL; ++height) {
             parent = node;
             node = node->data > data ? node->left : node->right;
         }
+
+        if (height > tree->height)
+            tree->height++;
+
         if (parent->data > data)
             parent->left = createBinNode(data, parent, NULL, NULL);
         else
             parent->right = createBinNode(data, parent, NULL, NULL);
     }
+
     tree->size++;
 }
 
-/*void traversalPreorderRecursive(BinNode *root, void (*f)(BinNode *, int), int level)
+/*void traversalPreorderRecursive(BinNode *root, void (*f)(BinNode *, int), int height)
 {
-    f(root, level);
+    f(root, height);
 
     if (root == NULL)
         return;
 
-    traversalPreorderRecursive(root->left, f, level + 1);
-    traversalPreorderRecursive(root->right, f, level + 1);
+    traversalPreorderRecursive(root->left, f, height + 1);
+    traversalPreorderRecursive(root->right, f, height + 1);
 }
 
-void traversalInorderRecursive(BinNode *root, void (*f)(BinNode *, int), int level)
+void traversalInorderRecursive(BinNode *root, void (*f)(BinNode *, int), int height)
 {
     if (root != NULL)
-        traversalInorderRecursive(root->left, f, level + 1);
+        traversalInorderRecursive(root->left, f, height + 1);
     
-    f(root, level);
+    f(root, height);
 
     if (root != NULL)
-        traversalInorderRecursive(root->right, f, level + 1);
+        traversalInorderRecursive(root->right, f, height + 1);
 }
 
-void traversalPostorderRecursive(BinNode *root, void (*f)(BinNode *, int), int level)
+void traversalPostorderRecursive(BinNode *root, void (*f)(BinNode *, int), int height)
 {
     if (root != NULL)
-        traversalPostorderRecursive(root->left, f, level + 1);
+        traversalPostorderRecursive(root->left, f, height + 1);
     
     if (root != NULL)
-        traversalPostorderRecursive(root->right, f, level + 1);
+        traversalPostorderRecursive(root->right, f, height + 1);
 
-    f(root, level);
+    f(root, height);
 }*/
 
-/*void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int level)
+/*void traversalInorder(BinNode *root, void (*f)(BinNode *, int), int height)
 {
     Stack *s = createStack();
     Pair *p;
     BinNode *node = root;
-    level = -1;
+    height = -1;
 
     for (;;) {
         if (node != NULL) {
-            p = createPair(node, level + 1);
+            p = createPair(node, height + 1);
             pushStack(s, p);
             free(p);
             node = node->left;
-            ++level;
+            ++height;
             continue;
         } else {
-            f(NULL, level + 1);
+            f(NULL, height + 1);
         }
         
         if (isEmptyStack(s))
@@ -142,10 +151,10 @@ void traversalPostorderRecursive(BinNode *root, void (*f)(BinNode *, int), int l
 
         p = popStack(s);
         node = p->first;
-        level = p->second;
+        height = p->second;
         free(p);
 
-        f(node, level);
+        f(node, height);
 
         node = node->right;
     }
@@ -162,24 +171,24 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int))
     while (!isEmptyStack(s)) {
         p = popStack(s);
         BinNode *node = p->first;
-        int level = p->second;
+        int height = p->second;
         free(p);
 
-        f(node, level);
+        f(node, height);
 
         if (node->right != NULL) {
-            p = createPair(node->right, level + 1);
+            p = createPair(node->right, height + 1);
             pushStack(s, p);
             free(p);
         } else {
-            f(NULL, level + 1);
+            f(NULL, height + 1);
         }
         if (node->left != NULL) {
-            p = createPair(node->left, level + 1);
+            p = createPair(node->left, height + 1);
             pushStack(s, p);
             free(p);
         } else {
-            f(NULL, level + 1);
+            f(NULL, height + 1);
         }
     }
     freeStack(&s);
@@ -190,26 +199,26 @@ void traversalInorder(BinNode *root, void (*f)(BinNode *, int))
     Stack *s = createStack();
     Pair *p;
     BinNode *node = root;
-    int level = -1;
+    int height = -1;
 
     while (!isEmptyStack(s) || node != NULL) {
         if (node != NULL) {
-            p = createPair(node, level + 1);
+            p = createPair(node, height + 1);
             pushStack(s, p);
             node = node->left;
             free(p);
-            ++level;
+            ++height;
         } else {
-            f(NULL, level + 1);
+            f(NULL, height + 1);
             p = popStack(s);
             node = p->first;
-            level = p->second;
+            height = p->second;
             free(p);
-            f(node, level);
+            f(node, height);
             node = node->right;
         }
     }
-    f(NULL, level + 1);
+    f(NULL, height + 1);
     freeStack(&s);
 }
 
@@ -217,26 +226,26 @@ void traversalPostorder(BinNode *root, void (*f)(BinNode *, int))
 {
     Stack *s = createStack();
     BinNode *node = root;
-    int level = 0;
+    int height = 0;
     Pair *p;
 
     while (node != NULL || !isEmptyStack(s)) {
         if (node == NULL) {
-            f(NULL, level);
+            f(NULL, height);
             if (s->head->data.first->right == NULL)
-                f(NULL, level);
+                f(NULL, height);
             while (!isEmptyStack(s) && s->head->data.first->right == node) {
                 p = popStack(s);
                 node = p->first;
-                level = p->second;
+                height = p->second;
                 free(p);
-                f(node, level);
+                f(node, height);
             }
             node = isEmptyStack(s) ? NULL : s->head->data.first->right;
         }
         if (node != NULL) {
-            ++level;
-            p = createPair(node, level - 1);
+            ++height;
+            p = createPair(node, height - 1);
             pushStack(s, p);
             free(p);
             node = node->left;
@@ -245,7 +254,7 @@ void traversalPostorder(BinNode *root, void (*f)(BinNode *, int))
     freeStack(&s);
 }
 
-void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int))
+void traversalheightorder(BinNode *root, void (*f)(BinNode *, int))
 {
     Queue *q = createQueue();
     Pair *p = createPair(root, 0);
@@ -254,22 +263,22 @@ void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int))
     while (!isEmptyQueue(q)) {
         p = popQueue(q);
         BinNode *node = p->first;
-        int level = p->second;
-        f(node, level);
+        int height = p->second;
+        f(node, height);
         free(p);
         if (node->left != NULL) {
-            p = createPair(node->left, level + 1);
+            p = createPair(node->left, height + 1);
             pushQueue(q, p);
             free(p);
         } else {
-            f(NULL, level + 1);
+            f(NULL, height + 1);
         }
         if (node->right != NULL) {
-            p = createPair(node->right, level + 1);
+            p = createPair(node->right, height + 1);
             pushQueue(q, p);
             free(p);
         } else {
-            f(NULL, level + 1);
+            f(NULL, height + 1);
         }
     }
     freeQueue(&q);
@@ -367,11 +376,11 @@ void removeBinNodeByData(int data, BinTree *tree)
         removeBinNode(&f, tree);
 }
 
-void printBinNode(BinNode *node, int level)
+void printBinNode(BinNode *node, int height)
 {
     int i;
-    //for (i = 0; i < level * TABWIDTH; ++i)
-    for (i = level * TABWIDTH; i > 0; --i)
+    //for (i = 0; i < height * TABWIDTH; ++i)
+    for (i = height * TABWIDTH; i > 0; --i)
         printf(" ");
 
     if (node == NULL)
@@ -386,13 +395,13 @@ void printBinTree(BinTree *tree)
     traversalPreorder(tree->root, &printBinNode);
 }
 
-void printBinTreeByLevel(BinTree *tree)
+void printBinTreeByheight(BinTree *tree)
 {
-    printf("\nQueue-based level order traversal:\n");
-    traversalLevelorder(tree->root, &printBinNode); 
+    printf("\nQueue-based height order traversal:\n");
+    traversalheightorder(tree->root, &printBinNode); 
 }
 
-void freeBinNode(BinNode *node, int level)
+void freeBinNode(BinNode *node, int height)
 {
     if (node != NULL)
         free((void *)node);
