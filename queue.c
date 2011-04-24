@@ -74,7 +74,7 @@ QUEUE_DATA_TYPE *popQueue(Queue *q)
     if (q->head == NULL)
         q->tail = NULL;
 
-    --(q->size);
+    q->size--;
 
     return data;
 }

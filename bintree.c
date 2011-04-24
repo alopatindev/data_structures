@@ -159,8 +159,7 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int))
     pushStack(s, p);
     free(p);
 
-    while (!isEmptyStack(s))
-    {
+    while (!isEmptyStack(s)) {
         p = popStack(s);
         BinNode *node = p->first;
         int level = p->second;
@@ -193,8 +192,7 @@ void traversalInorder(BinNode *root, void (*f)(BinNode *, int))
     BinNode *node = root;
     int level = -1;
 
-    while (!isEmptyStack(s) || node != NULL)
-    {
+    while (!isEmptyStack(s) || node != NULL) {
         if (node != NULL) {
             p = createPair(node, level + 1);
             pushStack(s, p);
@@ -222,8 +220,7 @@ void traversalPostorder(BinNode *root, void (*f)(BinNode *, int))
     int level = 0;
     Pair *p;
 
-    while (node != NULL || !isEmptyStack(s))
-    {
+    while (node != NULL || !isEmptyStack(s)) {
         if (node == NULL) {
             f(NULL, level);
             if (s->head->data.first->right == NULL)

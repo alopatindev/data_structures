@@ -28,7 +28,7 @@ void pushStack(Stack *stack, STACK_DATA_TYPE *data)
     StackNode *head = stack->head;
     n->next = head;
     stack->head = n;
-    ++(stack->size);
+    stack->size++;
 }
 
 STACK_DATA_TYPE *popStack(Stack *stack)
@@ -38,7 +38,7 @@ STACK_DATA_TYPE *popStack(Stack *stack)
 
     STACK_DATA_TYPE *head = (STACK_DATA_TYPE *)stack->head;
     stack->head = stack->head->next;
-    --(stack->size);
+    stack->size--;
 
     return head;
 }
