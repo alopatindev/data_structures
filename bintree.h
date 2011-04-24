@@ -42,7 +42,6 @@ void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int));
 
 BinNode *createBinNode(int data, BinNode *parent,
                        BinNode *left, BinNode *right);
-void insert1(int data, BinNode **node, BinNode *parent);
 BinNode *findMin(BinNode *node);
 void updateParent(BinNode **node, BinNode *value);
 void printBinNode(BinNode *node, int level);

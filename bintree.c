@@ -33,7 +33,7 @@ BinNode *createBinNode(int data, BinNode *parent, BinNode *left, BinNode *right)
     return node;
 }
 
-void insert1(int data, BinNode **node, BinNode *parent)
+/*void insert1(int data, BinNode **node, BinNode *parent)
 {
     if (node == NULL)
         return;
@@ -49,7 +49,7 @@ void insert1(int data, BinNode **node, BinNode *parent)
         insert1(data, &((*node)->right), *node);
 }
 
-void insertBinNode(int data, BinTree *tree)
+void insertBinNodeRecursive(int data, BinTree *tree)
 {
     BinNode **root = &(tree->root);
 
@@ -64,7 +64,25 @@ void insertBinNode(int data, BinTree *tree)
         insert1(data, root, (*root)->parent);
     }
 
-    ++(tree->size);
+    tree->size++;
+}*/
+
+void insertBinNode(int data, BinTree *tree)
+{
+    if (tree->root == NULL) {
+        tree->root = createBinNode(data, NULL, NULL, NULL);
+    } else {
+        BinNode *node = tree->root, *parent = NULL;
+        while (node != NULL) {
+            parent = node;
+            node = node->data > data ? node->left : node->right;
+        }
+        if (parent->data > data)
+            parent->left = createBinNode(data, parent, NULL, NULL);
+        else
+            parent->right = createBinNode(data, parent, NULL, NULL);
+    }
+    tree->size++;
 }
 
 /*void traversalPreorderRecursive(BinNode *root, void (*f)(BinNode *, int), int level)
@@ -339,7 +357,7 @@ void removeBinNode(BinNode **node, BinTree *tree)
         removeBinNode(&m, tree);
     }
 
-    --(tree->size);
+    tree->size--;
 }
 
 void removeBinNodeByData(int data, BinTree *tree)
