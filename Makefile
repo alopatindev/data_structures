@@ -1,4 +1,4 @@
 all:
-	gcc -Wall -Wno-unused-function -g -Iextra bintreetest.c bintree.c stack.c queue.c -o bintreetest
+	gcc -Wall -Wno-unused-function -g bintree/*.c -o bintree/bintreetest
 clean:
-	rm -f bintreetest
+	rm -f bintree/bintreetest
