@@ -9,9 +9,9 @@
 
 #define TABWIDTH 4
 
-typedef struct StructNode
+typedef struct StructBinNode
 {
-    struct StructNode *left, *right, *parent;
+    struct StructBinNode *left, *right, *parent;
     int data;
 } BinNode;
 
@@ -27,7 +27,7 @@ PAIR(BinNode *, int, Pair)
 
 BinTree *createBinTree();
 void printBinTree(BinTree *tree);
-void printBinTreeByheight(BinTree *tree);
+void printBinTreeByLevel(BinTree *tree);
 void insertBinNode(int data, BinTree *tree);
 BinNode *search(BinNode *root, int data);
 void removeBinNode(BinNode **node, BinTree *tree);

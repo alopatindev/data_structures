@@ -395,9 +395,9 @@ void printBinTree(BinTree *tree)
     traversalPreorder(tree->root, &printBinNode);
 }
 
-void printBinTreeByheight(BinTree *tree)
+void printBinTreeByLevel(BinTree *tree)
 {
-    printf("\nQueue-based height order traversal:\n");
+    printf("\nQueue-based level order traversal:\n");
     traversalLevelorder(tree->root, &printBinNode); 
 }
 
