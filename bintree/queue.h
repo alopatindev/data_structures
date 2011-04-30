@@ -14,7 +14,7 @@ typedef struct QueueStruct
 {
     QueueNode *head;
     QueueNode *tail;
-    size_t size;
+    int size;
 } Queue;
 
 Queue *createQueue();

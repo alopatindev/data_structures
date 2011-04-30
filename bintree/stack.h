@@ -12,7 +12,7 @@ LINKED_LIST(STACK_DATA_TYPE, StackNode, StructStackNode)
 typedef struct
 {
     StackNode *head;
-    size_t size;
+    int size;
 } Stack;
 
 Stack *createStack();
