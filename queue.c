@@ -58,7 +58,7 @@ void pushQueue(Queue *q, QUEUE_DATA_TYPE *data)
         q->tail = n;
     }
 
-    ++(q->size);
+    q->size++;
 }
 
 QUEUE_DATA_TYPE *popQueue(Queue *q)
