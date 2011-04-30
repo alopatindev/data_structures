@@ -51,22 +51,10 @@ struct LIST##STACK_NAME *pop##STACK_NAME(struct STACK_NAME *stack) \
 { \
     if (stack->size == 0 || !(stack->head)) \
         return NULL; \
-    struct LIST##STACK_NAME *head = (struct LIST##STACK_NAME  *)stack->head; \
+    struct LIST##STACK_NAME *head = (struct LIST##STACK_NAME *)stack->head; \
     stack->head = stack->head->next; \
     stack->size--; \
     return head; \
-} \
-\
-void print##STACK_NAME(struct STACK_NAME *stack) \
-{ \
-    if (!stack || !(stack->head) || stack->size == 0) \
-        return; \
-    struct LIST##STACK_NAME *s = stack->head; \
-    while (s != NULL) { \
-        printf("%d ", s->data); \
-        s = s->next; \
-    } \
-    printf("\n"); \
 } \
 \
 int isEmpty##STACK_NAME(struct STACK_NAME *stack) \
@@ -92,6 +80,18 @@ void free##STACK_NAME(struct STACK_NAME **stack) \
     clear##STACK_NAME(*stack); \
     free(*stack); \
     *stack = NULL; \
+} \
+\
+void print##STACK_NAME(struct STACK_NAME *stack) \
+{ \
+    if (!stack || !(stack->head) || stack->size == 0) \
+        return; \
+    struct LIST##STACK_NAME *s = stack->head; \
+    while (s != NULL) { \
+        printf("%d ", s->data); \
+        s = s->next; \
+    } \
+    printf("\n"); \
 } \
 
 #endif

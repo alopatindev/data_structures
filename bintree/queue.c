@@ -6,7 +6,7 @@ Queue *createQueue()
 {
     Queue *q = (Queue *)malloc(sizeof(Queue));
     if (q == NULL) {
-        fprintf(stderr, "Failed to allocate memory for a node\n");
+        fprintf(stderr, "Failed to allocate memory for a queue\n");
         return NULL;
     }
 
