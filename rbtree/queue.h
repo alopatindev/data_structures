@@ -101,13 +101,13 @@ int isEmpty##QUEUE_NAME(struct QUEUE_NAME *q) \
     return q->size == 0; \
 } \
 \
-void print##QUEUE_NAME(struct QUEUE_NAME *q) \
+void print##QUEUE_NAME(char *format, struct QUEUE_NAME *q) \
 { \
-    if (!q) \
+    if (!format || !q) \
         return; \
     struct LIST##QUEUE_NAME *n = q->head; \
     while (n) { \
-        printf("%d ", n->data); \
+        printf(format, n->data); \
         n = n->next; \
     } \
     printf("\n"); \

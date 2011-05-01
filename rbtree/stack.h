@@ -87,13 +87,13 @@ void free##STACK_NAME(struct STACK_NAME **stack) \
     *stack = NULL; \
 } \
 \
-void print##STACK_NAME(struct STACK_NAME *stack) \
+void print##STACK_NAME(char *format, struct STACK_NAME *stack) \
 { \
-    if (!stack || !stack->head || stack->size == 0) \
+    if (!format || !stack || !stack->head || stack->size == 0) \
         return; \
     struct LIST##STACK_NAME *s = stack->head; \
     while (s != NULL) { \
-        printf("%d ", s->data); \
+        printf(format, s->data); \
         s = s->next; \
     } \
     printf("\n"); \

@@ -46,18 +46,18 @@ STACK_DATA_TYPE *popStack(Stack *stack)
     return head;
 }
 
-/*void printStack(Stack *stack)
+void printStack(char *format, Stack *stack)
 {
-    if (stack == NULL || stack->head == NULL || stack->size == 0)
+    if (format == NULL || stack == NULL || stack->head == NULL || stack->size == 0)
         return;
 
     StackNode *s = stack->head;
     while (s != NULL) {
-        printf("%d ", s->data);
+        printf(format, s->data);
         s = s->next;
     }
     printf("\n");
-}*/
+}
 
 int isEmptyStack(Stack *stack)
 {

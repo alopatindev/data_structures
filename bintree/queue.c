@@ -38,7 +38,6 @@ void freeQueue(Queue **queue)
 {
     if (queue == NULL || *queue == NULL)
         return;
-
     clearQueue(*queue);
     free(*queue);
     *queue = NULL;
@@ -86,19 +85,18 @@ QUEUE_DATA_TYPE *popQueue(Queue *q)
     return data;
 }
 
-/*void printQueue(Queue *q)
+void printQueue(char *format, Queue *q)
 {
-    if (q == NULL)
+    if (format == NULL || q == NULL)
         return;
 
     QueueNode *n = q->head;
     while (n) {
-        //printf("%d ", n->data);
-        printf("%d ", n->data);
+        printf(format, n->data);
         n = n->next;
     }
     printf("\n");
-}*/
+}
 
 int isEmptyQueue(Queue *q)
 {
