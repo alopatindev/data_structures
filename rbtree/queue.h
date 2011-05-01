@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "linkedlist.h"
 
-#define LIST List
+//#define LIST List
 #define QUEUE(QUEUE_NAME, DATA_TYPE) \
 LINKED_LIST(LIST##QUEUE_NAME, DATA_TYPE) \
 struct QUEUE_NAME \
@@ -39,12 +39,19 @@ void clear##QUEUE_NAME(struct QUEUE_NAME *queue) \
         free(q); \
         q = queue->head; \
     } \
+    queue->size = 0; \
+    queue->head = NULL; \
+    queue->tail = NULL; \
 } \
 \
 void free##QUEUE_NAME(struct QUEUE_NAME **queue) \
 { \
-    clear##QUEUE_NAME(*queue); \
-    free(*queue); \
+    if (!queue) \
+        return; \
+    if (*queue) { \
+        clear##QUEUE_NAME(*queue); \
+        free(*queue); \
+    } \
     *queue = NULL; \
 } \
 \

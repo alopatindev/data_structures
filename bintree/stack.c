@@ -18,6 +18,9 @@ Stack *createStack()
 
 void pushStack(Stack *stack, STACK_DATA_TYPE *data)
 {
+    if (stack == NULL || data == NULL)
+        return;
+
     StackNode *n = (StackNode *)malloc(sizeof(StackNode));
     if (n == NULL) {
         fprintf(stderr, "Failed to allocate memory for the stack node\n");
@@ -58,7 +61,7 @@ STACK_DATA_TYPE *popStack(Stack *stack)
 
 int isEmptyStack(Stack *stack)
 {
-    return stack->size == 0;
+    return stack == NULL || stack->size == 0;
 }
 
 void clearStack(Stack *stack)
@@ -79,6 +82,8 @@ void clearStack(Stack *stack)
 
 void freeStack(Stack **stack)
 {
+    if (stack == NULL || *stack == NULL)
+        return;
     clearStack(*stack);
     free(*stack);
     *stack = NULL;
