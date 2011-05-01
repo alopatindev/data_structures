@@ -36,12 +36,11 @@ void clearQueue(Queue *queue)
 
 void freeQueue(Queue **queue)
 {
-    if (queue == NULL)
+    if (queue == NULL || *queue == NULL)
         return;
-    if (*queue != NULL) {
-        clearQueue(*queue);
-        free(*queue);
-    }
+
+    clearQueue(*queue);
+    free(*queue);
     *queue = NULL;
 }
 
