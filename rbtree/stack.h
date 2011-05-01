@@ -27,6 +27,8 @@ struct STACK_NAME *create##STACK_NAME() \
 \
 void push##STACK_NAME(struct STACK_NAME *stack, DATA_TYPE *data) \
 { \
+    if (!stack || !data) \
+        return; \
     struct LIST##STACK_NAME *n = (struct LIST##STACK_NAME *)malloc(sizeof(\
         struct LIST##STACK_NAME)); \
     if (!n) { \
@@ -42,13 +44,13 @@ void push##STACK_NAME(struct STACK_NAME *stack, DATA_TYPE *data) \
 \
 struct LIST##STACK_NAME *top##STACK_NAME(struct STACK_NAME *stack) \
 { \
-    if (stack->size == 0 || !(stack->head)) \
+    if (!stack || stack->size == 0) \
         return NULL; \
     return stack->head; \
 } \
 struct LIST##STACK_NAME *pop##STACK_NAME(struct STACK_NAME *stack) \
 { \
-    if (stack->size == 0 || !(stack->head)) \
+    if (!stack || stack->size == 0 || !stack->head) \
         return NULL; \
     struct LIST##STACK_NAME *head = (struct LIST##STACK_NAME *)stack->head; \
     stack->head = stack->head->next; \
@@ -58,12 +60,12 @@ struct LIST##STACK_NAME *pop##STACK_NAME(struct STACK_NAME *stack) \
 \
 int isEmpty##STACK_NAME(struct STACK_NAME *stack) \
 { \
-    return stack->size == 0; \
+    return !stack || stack->size == 0; \
 } \
 \
 void clear##STACK_NAME(struct STACK_NAME *stack) \
 { \
-    if (!stack || !(stack->head)) \
+    if (!stack || !stack->head) \
         return; \
     struct LIST##STACK_NAME *s = stack->head; \
     struct LIST##STACK_NAME *n; \
@@ -78,6 +80,8 @@ void clear##STACK_NAME(struct STACK_NAME *stack) \
 \
 void free##STACK_NAME(struct STACK_NAME **stack) \
 { \
+    if (!stack || !*stack) \
+        return; \
     clear##STACK_NAME(*stack); \
     free(*stack); \
     *stack = NULL; \
@@ -85,7 +89,7 @@ void free##STACK_NAME(struct STACK_NAME **stack) \
 \
 void print##STACK_NAME(struct STACK_NAME *stack) \
 { \
-    if (!stack || !(stack->head) || stack->size == 0) \
+    if (!stack || !stack->head || stack->size == 0) \
         return; \
     struct LIST##STACK_NAME *s = stack->head; \
     while (s != NULL) { \

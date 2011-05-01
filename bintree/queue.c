@@ -28,18 +28,26 @@ void clearQueue(Queue *queue)
         free(q);
         q = queue->head;
     }
+
+    queue->size = 0;
+    queue->head = NULL;
+    queue->tail = NULL;
 }
 
 void freeQueue(Queue **queue)
 {
-    clearQueue(*queue);
-    free(*queue);
+    if (queue == NULL)
+        return;
+    if (*queue != NULL) {
+        clearQueue(*queue);
+        free(*queue);
+    }
     *queue = NULL;
 }
 
 void pushQueue(Queue *q, QUEUE_DATA_TYPE *data)
 {
-    if (q == NULL)
+    if (q == NULL || data == NULL)
         return;
 
     QueueNode *n = (QueueNode *)malloc(sizeof(QueueNode));
@@ -95,5 +103,5 @@ QUEUE_DATA_TYPE *popQueue(Queue *q)
 
 int isEmptyQueue(Queue *q)
 {
-    return q->size == 0;
+    return q == NULL || q->size == 0;
 }
