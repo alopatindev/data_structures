@@ -67,9 +67,11 @@ void clearStack(Stack *stack)
         return;
 
     StackNode *s = stack->head;
+    StackNode *n;
     while (s != NULL) {
+        n = s->next;
         free(s);
-        s = s->next;
+        s = n;
     }
     stack->size = 0;
     stack->head = NULL;

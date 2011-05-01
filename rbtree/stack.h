@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include "linkedlist.h"
 
-#define LIST List
 #define STACK(STACK_NAME, DATA_TYPE) \
 LINKED_LIST(LIST##STACK_NAME, DATA_TYPE) \
 struct STACK_NAME \
@@ -67,9 +66,11 @@ void clear##STACK_NAME(struct STACK_NAME *stack) \
     if (!stack || !(stack->head)) \
         return; \
     struct LIST##STACK_NAME *s = stack->head; \
+    struct LIST##STACK_NAME *n; \
     while (s) { \
+        n = s->next; \
         free(s); \
-        s = s->next; \
+        s = n; \
     } \
     stack->size = 0; \
     stack->head = NULL; \
