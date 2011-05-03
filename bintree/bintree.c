@@ -79,13 +79,13 @@ void insertBinNode(int data, BinTree *tree)
         int height;
         for (height = 0; node != NULL; ++height) {
             parent = node;
-            node = node->data > data ? node->left : node->right;
+            node = data < node->data ? node->left : node->right;
         }
 
         if (height > tree->height)
             tree->height++;
 
-        if (parent->data > data)
+        if (data < parent->data)
             parent->left = createBinNode(data, parent, NULL, NULL);
         else
             parent->right = createBinNode(data, parent, NULL, NULL);

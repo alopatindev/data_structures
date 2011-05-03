@@ -48,6 +48,7 @@ struct LIST##STACK_NAME *top##STACK_NAME(struct STACK_NAME *stack) \
         return NULL; \
     return stack->head; \
 } \
+\
 struct LIST##STACK_NAME *pop##STACK_NAME(struct STACK_NAME *stack) \
 { \
     if (!stack || stack->size == 0 || !stack->head) \
