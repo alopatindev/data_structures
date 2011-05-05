@@ -99,7 +99,90 @@ void insertRBNodeRecursive(char *key, RBDATATYPE *data, struct RBTree *tree)
     tree->size++;
 }*/
 
+struct RBNode *grandparent(struct RBNode *node)
+{
+    if (!node || !node->parent)
+        return NULL;
+    return node->parent->parent;
+}
+
+struct RBNode *uncle(struct RBNode *node)
+{
+    struct RBNode *g = grandparent(node);
+    if (!g)
+        return NULL;
+    return node->parent == g->left ? g->right : g->left;
+}
+
+void rotateLeft(struct RBNode **node)
+{
+    if (!node || !(*node))
+        return;
+
+    struct RBNode *b = (*node)->left, *c = (*node)->right, *p = (*node)->parent;
+    struct RBNode *a = p->left, *g = p->parent;
+
+    if (!g)
+        return;
+
+    (*node)->parent = g;
+    if (g->left == p)
+        g->left = *node;
+    else
+        g->right = *node;
+
+    p->parent = *node;
+    (*node)->left = p;
+
+    p->right = b;
+    if (b)
+        b->parent = p;
+}
+
+void rotateRight(struct RBNode **node)
+{
+    struct RBNode *g = (*node)->parent, *p = (*node)->left, *c = (*node)->right;
+    struct RBNode *a = p->left, *b = p->right;
+
+    p->parent = g;
+    if (g->left == *node)
+        g->left = p;
+    else
+        g->right = p;
+
+    p->right = *node;
+    (*node)->parent = p;
+
+    (*node)->left = b;
+    if (b)
+        b->parent = *node;
+}
+
 void insertRBNode(struct RBTree *tree, char *key, RBDATATYPE *data)
+{
+    struct RBNode *n = insertRBNodeBinary(tree, key, data);
+    if (!n)
+        return;
+
+    if (!n->parent) {
+        //n->color = Black;
+        return;
+    }
+    if (n->parent->color == Red) {
+        struct RBNode *u = uncle(n);
+        if (u && u->color == Red) {
+            n->parent->color = Black;
+            u->color = Black;
+            if (n->parent->parent)
+                n->parent->parent = Red;
+// Проверяем, не нарушает ли он (дед?) теперь балансировку. Если в результате этих перекрашиваний мы дойдём до корня, то в нём в любом случае ставим чёрный цвет.
+        } else {
+// выполняем поворот. Если добавляемый узел был правым потомком, то необходимо сначала выполнить левое вращение, которое сделает его левым потомком
+        }
+    }
+}
+
+struct RBNode *insertRBNodeBinary(struct RBTree *tree, char *key, RBDATATYPE *data)
 {
     if (!tree->root) {
         tree->root = createRBNode(key, data, NULL, NULL, NULL);
@@ -131,6 +214,8 @@ void insertRBNode(struct RBTree *tree, char *key, RBDATATYPE *data)
         parent->right = n;
 
     tree->size++;
+
+    return n;
 }
 
 void traversalPreorder(struct RBNode *root, void (*f)(struct RBNode *, int))
