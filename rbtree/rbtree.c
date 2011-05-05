@@ -59,39 +59,7 @@ struct RBNode *createRBNode(char *key, RBDATATYPE *data, struct RBNode *parent,
     return node;
 }
 
-/*void insertRBNode(struct RBTree *tree, char *key, RBDATATYPE *data)
-{
-    if (!tree->root) {
-        tree->root = createRBNode(key, data, NULL, NULL, NULL);
-        tree->height = 0;
-    } else {
-        struct RBNode *node = tree->root, *parent = NULL;
-
-        int height;
-        for (height = 0; node; ++height) {
-            parent = node;
-            node = compare(node->key, key) ? node->left : node->right;
-        }
-
-        if (height > tree->height)
-            tree->height++;
-
-        // FIXME: sometimes unable to attach nodes
-        if (compare(key, parent->key)) {
-            parent->left = createRBNode(key, data, parent, NULL, NULL);
-        //    printf("creating '%s' at left of '%s'\n", key, parent->key);
-        }
-        else
-        {
-            parent->right = createRBNode(key, data, parent, NULL, NULL);
-        //    printf("creating '%s' at right of '%s'\n", key, parent->key);
-        }
-    }
-
-    tree->size++;
-}
-
-void insert1(char *key, RBDATATYPE *data, struct RBNode **node, struct RBNode *parent)
+/*void insert1(char *key, RBDATATYPE *data, struct RBNode **node, struct RBNode *parent)
 {
     if (!node)
         return;
