@@ -9,9 +9,14 @@ STACK(StackRBNodes, struct RBNode *)
 
 int compare(char *s1, char *s2) // operator<
 {
-//    if (strnlen(s1, MAXKEYSIZE) > strnlen(s2, MAXKEYSIZE))
-//        return 0;
-    return strncmp(s1, s2, MAXKEYSIZE) <= 0;
+    size_t l1 = strnlen(s1, MAXKEYSIZE), l2 = strnlen(s2, MAXKEYSIZE);
+
+    if (l1 > l2)
+        return 0;
+    else if (l1 < l2)
+        return 1;
+    else
+        return strncmp(s1, s2, MAXKEYSIZE) < 0;
 }
 
 int equalStrings(char *s1, char *s2, size_t n)
@@ -245,5 +250,6 @@ void printRBNode(struct RBNode *node, int height)
     if (node == NULL)
         printf("NULL\n");
     else
-        printf(PRINTFORMAT, node->key, node->data);
+        printf(PRINTFORMAT, node->key,
+               node->color == Red ? "Red" : "Black", node->data);
 }
