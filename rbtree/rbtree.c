@@ -9,7 +9,19 @@ STACK(StackRBNodes, struct RBNode *)
 
 int compare(char *s1, char *s2) // operator<
 {
-    return strncmp(s1, s2, MAXKEYSIZE) < 0;
+//    if (strnlen(s1, MAXKEYSIZE) > strnlen(s2, MAXKEYSIZE))
+//        return 0;
+    return strncmp(s1, s2, MAXKEYSIZE) <= 0;
+}
+
+int equalStrings(char *s1, char *s2, size_t n)
+{
+    size_t i;
+    for (i = 0; i < n; ++i)
+        if (s1[i] != s2[i])
+            return 0;
+
+    return 1;
 }
 
 struct RBTree *createRBTree()
@@ -47,7 +59,7 @@ struct RBNode *createRBNode(char *key, RBDATATYPE *data, struct RBNode *parent,
     return node;
 }
 
-void insertRBNode(struct RBTree *tree, char *key, RBDATATYPE *data)
+/*void insertRBNode(struct RBTree *tree, char *key, RBDATATYPE *data)
 {
     if (!tree->root) {
         tree->root = createRBNode(key, data, NULL, NULL, NULL);
@@ -79,7 +91,6 @@ void insertRBNode(struct RBTree *tree, char *key, RBDATATYPE *data)
     tree->size++;
 }
 
-/*
 void insert1(char *key, RBDATATYPE *data, struct RBNode **node, struct RBNode *parent)
 {
     if (!node)
@@ -90,7 +101,8 @@ void insert1(char *key, RBDATATYPE *data, struct RBNode **node, struct RBNode *p
         return;
     }
 
-    if (*data < (*node)->data)
+    //if (*data < (*node)->data)
+    if (compare(key, (*node)->key))
         insert1(key, data, &((*node)->left), *node);
     else
         insert1(key, data, &((*node)->right), *node);
@@ -113,6 +125,40 @@ void insertRBNodeRecursive(char *key, RBDATATYPE *data, struct RBTree *tree)
 
     tree->size++;
 }*/
+
+void insertRBNode(struct RBTree *tree, char *key, RBDATATYPE *data)
+{
+    if (!tree->root) {
+        tree->root = createRBNode(key, data, NULL, NULL, NULL);
+        return;
+    }
+
+    struct RBNode *node = tree->root, *parent = NULL;
+
+    int height;
+    for (height = 0; node; ++height) {
+        if (equalStrings(key, node->key, MAXKEYSIZE)) {
+            return;
+        } else {
+            parent = node;
+            node = compare(key, node->key) ? node->left : node->right;
+        }
+    }
+
+    if (height > tree->height)
+        tree->height++;
+
+    struct RBNode *n = createRBNode(key, data, NULL, NULL, NULL);
+    if (!n)
+        return;
+    
+    if (compare(key, parent->key))
+        parent->left = n;
+    else
+        parent->right = n;
+
+    tree->size++;
+}
 
 void traversalPreorder(struct RBNode *root, void (*f)(struct RBNode *, int))
 {
