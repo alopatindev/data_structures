@@ -137,7 +137,8 @@ struct HNode *insertHNodeBinary(struct Heap *heap, char *key, HDATATYPE *data)
     return n;
 }
 
-void traversalPreorder(struct HNode *root, void (*f)(struct HNode *, int))
+void traversalPreorder(struct HNode *root,
+                       int (*f)(struct HNode *, int, void *), void *adata)
 {
     struct StackHNodes *nodes = createStackHNodes();
     struct StackHLevels *levels = createStackHLevels();
@@ -152,28 +153,32 @@ void traversalPreorder(struct HNode *root, void (*f)(struct HNode *, int))
         height = h->data;
         free(n); free(h);
 
-        f(node, height);
+        if (!f(node, height, adata))
+            break;
 
         if (node->right) {
             int h = height + 1;
             pushStackHNodes(nodes, &(node->right));
             pushStackHLevels(levels, &h);
         } else {
-            f(NULL, height + 1);
+            if (!f(NULL, height + 1, adata))
+                break;
         }
         if (node->left) {
             int h = height + 1;
             pushStackHNodes(nodes, &(node->left));
             pushStackHLevels(levels, &h);
         } else {
-            f(NULL, height + 1);
+            if (!f(NULL, height + 1, adata))
+                break;
         }
     }
     freeStackHNodes(&nodes);
     freeStackHLevels(&levels);
 }
 
-void traversalInorder(struct HNode *root, void (*f)(struct HNode *, int))
+void traversalInorder(struct HNode *root,
+                      int (*f)(struct HNode *, int, void *), void *adata)
 {
     struct StackHNodes *nodes = createStackHNodes();
     struct StackHLevels *levels = createStackHLevels();
@@ -189,22 +194,25 @@ void traversalInorder(struct HNode *root, void (*f)(struct HNode *, int))
             node = node->left;
             ++height;
         } else {
-            f(NULL, height + 1);
+            if (!f(NULL, height + 1, adata))
+                break;
             struct LISTStackHNodes *n = popStackHNodes(nodes);
             struct LISTStackHLevels *l = popStackHLevels(levels);
             node = n->data;
             height = l->data;
             free(n); free(l);
-            f(node, height);
+            if (!f(node, height, adata))
+                break;
             node = node->right;
         }
     }
-    f(NULL, height + 1);
+    f(NULL, height + 1, adata);  // FIXME
     freeStackHNodes(&nodes);
     freeStackHLevels(&levels);
 }
 
-void traversalPostorder(struct HNode *root, void (*f)(struct HNode *, int))
+void traversalPostorder(struct HNode *root,
+                        int (*f)(struct HNode *, int, void *), void *adata)
 {
     struct StackHNodes *nodes = createStackHNodes();
     struct StackHLevels *levels = createStackHLevels();
@@ -213,9 +221,12 @@ void traversalPostorder(struct HNode *root, void (*f)(struct HNode *, int))
 
     while (node || !isEmptyStackHNodes(nodes)) {
         if (!node) {
-            f(NULL, height);
-            if (!(topStackHNodes(nodes)->data->right))
-                f(NULL, height);
+            if (!f(NULL, height, adata))
+                break;
+            if (!(topStackHNodes(nodes)->data->right)) {
+                if (!f(NULL, height, adata))
+                    break;
+            }
 
             while (!isEmptyStackHNodes(nodes) &&
                    topStackHNodes(nodes)->data->right == node)
@@ -225,7 +236,8 @@ void traversalPostorder(struct HNode *root, void (*f)(struct HNode *, int))
                 node = n->data;
                 height = l->data;
                 free(n); free(l);
-                f(node, height);
+                if (!f(node, height, adata))
+                    break;
             }
             node = isEmptyStackHNodes(nodes)
                    ? NULL : topStackHNodes(nodes)->data->right;
@@ -242,7 +254,8 @@ void traversalPostorder(struct HNode *root, void (*f)(struct HNode *, int))
     freeStackHLevels(&levels);
 }
 
-void traversalLevelorder(struct HNode *root, void (*f)(struct HNode *, int))
+void traversalLevelorder(struct HNode *root,
+                         int (*f)(struct HNode *, int, void *), void *adata)
 {
     struct QueueHNodes *nodes = createQueueHNodes();
     struct QueueHLevels *levels = createQueueHLevels();
@@ -255,27 +268,31 @@ void traversalLevelorder(struct HNode *root, void (*f)(struct HNode *, int))
         struct HNode *node = n->data;
         int height = l->data;
         free(n); free(l);
-        f(node, height);
+        if (!f(node, height, adata))
+            break;
         if (node->left) {
             h = height + 1;
             pushQueueHNodes(nodes, &(node->left));
             pushQueueHLevels(levels, &h);
         } else {
-            f(NULL, height + 1);
+            if (!f(NULL, height + 1, adata))
+                break;
         }
         if (node->right) {
             h = height + 1;
             pushQueueHNodes(nodes, &(node->right));
             pushQueueHLevels(levels, &h);
         } else {
-            f(NULL, height + 1);
+            if (!f(NULL, height + 1, adata))
+                break;
         }
     }
     freeQueueHNodes(&nodes);
     freeQueueHLevels(&levels);
 }
 
-void traversalLevelorder2(struct HNode *root, void (*f)(struct HNode *, int))
+void traversalLevelorder2(struct HNode *root,
+                          int (*f)(struct HNode *, int, void *), void *adata)
 {
     struct QueueHNodes *nodes = createQueueHNodes();
     struct QueueHLevels *levels = createQueueHLevels();
@@ -288,30 +305,48 @@ void traversalLevelorder2(struct HNode *root, void (*f)(struct HNode *, int))
         struct HNode *node = n->data;
         int height = l->data;
         free(n); free(l);
-        f(node, height);
+        if (!f(node, height, adata))
+            break;
         if (node->right) {
             h = height + 1;
             pushQueueHNodes(nodes, &(node->right));
             pushQueueHLevels(levels, &h);
         } else {
-            f(NULL, height + 1);
+            if (!f(NULL, height + 1, adata))
+                break;
         }
         if (node->left) {
             h = height + 1;
             pushQueueHNodes(nodes, &(node->left));
             pushQueueHLevels(levels, &h);
         } else {
-            f(NULL, height + 1);
+            if (!f(NULL, height + 1, adata))
+                break;
         }
     }
     freeQueueHNodes(&nodes);
     freeQueueHLevels(&levels);
 }
 
-void freeHNode(struct HNode *node, int height)
+struct HNode *searchHeap(struct Heap *heap, char *key)
+{
+    struct PKeyNode pkn;
+    strncpy(pkn.key, key, MAXKEYSIZE);
+    traversalLevelorder(heap->root, &notMatchHNode, (void *)(&pkn));
+    return pkn.node;
+}
+
+int notMatchHNode(struct HNode *node, int height, void *adata)
+{
+    struct PKeyNode *pkn = (struct PKeyNode *)adata;
+    return !(node && equalKeys(node->key, pkn->key) && (pkn->node = node));
+}
+
+int freeHNode(struct HNode *node, int height, void *adata)
 {
     if (node)
         free((void *)node);
+    return 1;
 }
 
 void clearHeap(struct Heap *heap)
@@ -319,7 +354,7 @@ void clearHeap(struct Heap *heap)
     if (!heap || !heap->root || !heap->size)
         return;
 
-    traversalPostorder(heap->root, &freeHNode);
+    traversalPostorder(heap->root, &freeHNode, NULL);
     heap->size = 0;
 }
 
@@ -330,7 +365,7 @@ void freeHeap(struct Heap **heap)
     heap = NULL;
 }
 
-void printHNode(struct HNode *node, int height)
+int printHNode(struct HNode *node, int height, void *adata)
 {
     int i;
     for (i = height * TABWIDTH; i > 0; --i)
@@ -340,4 +375,11 @@ void printHNode(struct HNode *node, int height)
         printf("NULL\n");
     else
         printf(PRINTFORMAT, node->key, node->data);
+
+    return 1;
+}
+
+void printHeap(struct Heap *heap)
+{
+    traversalPreorder(heap->root, &printHNode, NULL);
 }

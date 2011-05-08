@@ -12,10 +12,10 @@ int main()
         snprintf(tmp, 3, "%d", a[i]);
         insertHNode(heap, tmp, &i);
     }
-    traversalPreorder(heap->root, &printHNode);
-    printf("===\n");
-    traversalLevelorder2(heap->root, &printHNode);
-    freeHeap(&heap);
+    printHeap(heap);
+    //traversalLevelorder2(heap->root, &printHNode, NULL);
+    //struct HNode *nn = searchHeap(heap, "4");
 
+    freeHeap(&heap);
     return 0;
 }
