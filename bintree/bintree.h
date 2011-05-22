@@ -6,6 +6,7 @@
 #define HAS_LEFT(node) ((node)->left != NULL)
 #define HAS_RIGHT(node) ((node)->right != NULL)
 #define IS_LEAF(node) (!HAS_LEFT(node) && !HAS_RIGHT(node))
+#define IS_ROOT(node) (!((node)->parent))
 
 #define TABWIDTH 4
 
@@ -44,7 +45,7 @@ void traversalLevelorder(BinNode *root, void (*f)(BinNode *, int));
 BinNode *createBinNode(int data, BinNode *parent,
                        BinNode *left, BinNode *right);
 BinNode *findMin(BinNode *node);
-void updateParent(BinNode **node, BinNode *value);
+void updateParent(BinTree *tree, BinNode **node, BinNode *value);
 void printBinNode(BinNode *node, int height);
 void freeBinNode(BinNode *node, int height);
 

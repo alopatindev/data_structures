@@ -176,6 +176,9 @@ void traversalPreorder(BinNode *root, void (*f)(BinNode *, int))
 
         f(node, height);
 
+        if (node == NULL)
+            continue;
+
         if (node->right != NULL) {
             p = createPair(node->right, height + 1);
             pushStack(s, p);
@@ -317,20 +320,24 @@ BinNode *findMin(BinNode *node)
 }
 
 // updates parent's pointer before removal
-void updateParent(BinNode **node, BinNode *value)
+void updateParent(BinTree *tree, BinNode **node, BinNode *value)
 {
-    if (node == NULL)
+    printf("gonna remove something\n");
+    if (!node || !*node || !tree || !tree->root)
         return;
 
-    if ((*node)->parent == NULL)
-        return;
+    //if (*node == tree->root) {
+    if (!(*node)->parent) {
+    //if (IS_ROOT(*node)) {
+        tree->root = value;
+    } else {
+        if ((*node)->parent->left == *node)
+            (*node)->parent->left = value;
+        else
+            (*node)->parent->right = value;
+    }
 
-    if ((*node)->parent->left == *node)
-        (*node)->parent->left = value;
-    else
-        (*node)->parent->right = value;
-
-    if (value != NULL)
+    if (value)
         value->parent = (*node)->parent;
 }
 
@@ -342,15 +349,15 @@ void removeBinNode(BinNode **node, BinTree *tree)
     if (IS_LEAF(*node)) {
         // 1. Deleting a leaf (node with no children):
         // Deleting a leaf is easy, as we can simply remove it from the tree.
-        updateParent(node, NULL);
+        updateParent(tree, node, NULL);
         free((void *)*node);
     } else if (HAS_LEFT(*node) && !HAS_RIGHT(*node)) {
         // 2. Deleting a node with one child:
         // Remove the node and replace it with its child.
-        updateParent(node, (*node)->left);
+        updateParent(tree, node, (*node)->left);
         free((void *)*node);
     } else if (!HAS_LEFT(*node) && HAS_RIGHT(*node)) {
-        updateParent(node, (*node)->right);
+        updateParent(tree, node, (*node)->right);
         free((void *)*node);
     } else {  //  HAS_LEFT(*node) && HAS_RIGHT(*node)
         // 3. Deleting a node with two children:
