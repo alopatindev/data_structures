@@ -349,16 +349,19 @@ void removeBinNode(BinNode **node, BinTree *tree)
     if (IS_LEAF(*node)) {
         // 1. Deleting a leaf (node with no children):
         // Deleting a leaf is easy, as we can simply remove it from the tree.
+        struct BinNode *d = *node;
         updateParent(tree, node, NULL);
-        free((void *)*node);
+        free((void *)d);
     } else if (HAS_LEFT(*node) && !HAS_RIGHT(*node)) {
         // 2. Deleting a node with one child:
         // Remove the node and replace it with its child.
+        struct BinNode *d = *node;
         updateParent(tree, node, (*node)->left);
-        free((void *)*node);
+        free((void *)d);
     } else if (!HAS_LEFT(*node) && HAS_RIGHT(*node)) {
+        struct BinNode *d = *node;
         updateParent(tree, node, (*node)->right);
-        free((void *)*node);
+        free((void *)d);
     } else {  //  HAS_LEFT(*node) && HAS_RIGHT(*node)
         // 3. Deleting a node with two children:
         // Do not delete "node". Find the smallest (the leftest) child of
