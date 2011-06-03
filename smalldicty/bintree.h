@@ -12,6 +12,7 @@
 #define HAS_RIGHT(node) ((node)->right != NULL)
 #define IS_LEAF(node) (!HAS_LEFT(node) && !HAS_RIGHT(node))
 #define IS_ROOT(node) (!((node)->parent))
+#define DICT_FILE "dict.bin"
 
 struct BinNode
 {
@@ -25,6 +26,12 @@ struct BinTree
     struct BinNode *root;
     int height;
     int size;
+};
+
+struct DictPair
+{
+    char key[KEY_LENGTH];
+    char value[VALUE_LENGTH];
 };
 
 struct BinTree *createBinTree();
@@ -50,4 +57,7 @@ void traversalPreorder(struct BinNode *root, void (*f)(struct BinNode *));
 void traversalInorder(struct BinNode *root, void (*f)(struct BinNode *));
 void traversalPostorder(struct BinNode *root, void (*f)(struct BinNode *));
 
+void appendToFile(struct BinNode *node, FILE *f);
+void traversalToFile(struct BinNode *root, void (*func)\
+                                           (struct BinNode *, FILE *f));
 #endif

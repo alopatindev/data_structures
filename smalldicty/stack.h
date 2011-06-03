@@ -1,6 +1,7 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include <stdio.h>
 #include "bintree.h"
 #include <stdlib.h>
 

@@ -346,6 +346,13 @@ void removeBinNode(BinNode **node, BinTree *tree)
     if (node == NULL || *node == NULL)
         return;
 
+    // we're gonna work with original pointer to pointer if it's not
+    if ((*node)->parent) {
+        node = ((*node)->parent->left == *node)
+               ? &((*node)->parent->left)
+               : &((*node)->parent->right);
+    }
+
     if (IS_LEAF(*node)) {
         // 1. Deleting a leaf (node with no children):
         // Deleting a leaf is easy, as we can simply remove it from the tree.

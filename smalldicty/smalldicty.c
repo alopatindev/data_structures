@@ -21,7 +21,7 @@ void input(char *dest)
     dest[i] = '\0';
 }
 
-int help(CALLBACK_SIGNATURE)
+static int help(CALLBACK_SIGNATURE)
 {
     printf("Short help. Just input a word or one of those commands:\n"
            "  /help - show this text\n"
@@ -30,11 +30,13 @@ int help(CALLBACK_SIGNATURE)
            "  /edit - edit a word\n"
            "  /remove - remove a word\n"
            "  /quit - exit this program\n"
+           "  /store - save data to disk\n"
+           "  /load - load data from disk\n" 
            "  /tree - print a binary tree (for debugging only)\n\n");
     return 1;
 }
 
-int about(CALLBACK_SIGNATURE)
+static int about(CALLBACK_SIGNATURE)
 {
     printf(
         "smalldicty is a small dictionary for any language(s).\n"
@@ -45,19 +47,19 @@ int about(CALLBACK_SIGNATURE)
     return 1;
 }
 
-int quit(CALLBACK_SIGNATURE)
+static int quit(CALLBACK_SIGNATURE)
 {
     return 0;
 }
 
-int query(CALLBACK_SIGNATURE)
+static int query(CALLBACK_SIGNATURE)
 {
     struct BinNode *n = search(dict->root, in);
     printf("   %s\n", n ? n->value : "Not found.");
     return 1;
 }
 
-int addWord(CALLBACK_SIGNATURE)
+static int addWord(CALLBACK_SIGNATURE)
 {
     char key[KEY_LENGTH];
     char value[VALUE_LENGTH];
@@ -86,7 +88,7 @@ int addWord(CALLBACK_SIGNATURE)
     return 1;
 }
 
-int editWord(CALLBACK_SIGNATURE)
+static int editWord(CALLBACK_SIGNATURE)
 {
     char key[KEY_LENGTH];
     char value[VALUE_LENGTH];
@@ -120,7 +122,7 @@ int editWord(CALLBACK_SIGNATURE)
     return 1;
 }
 
-int removeWord(CALLBACK_SIGNATURE)
+static int removeWord(CALLBACK_SIGNATURE)
 {
     char key[KEY_LENGTH];
     printf("Enter a word you wish to remove: ");
@@ -158,6 +160,24 @@ int printTreeWrapper(CALLBACK_SIGNATURE)
     return 1;
 }
 
+static int store(CALLBACK_SIGNATURE)
+{
+    traversalToFile(dict->root, &appendToFile);
+    return 1;
+}
+
+static int load(CALLBACK_SIGNATURE)
+{
+    FILE *f = fopen(DICT_FILE, "r");
+    struct DictPair p;
+    while (!feof(f)) {
+        fread(&p, sizeof(struct DictPair), 1, f);
+        insertBinNode(dict, p.key, p.value);
+    }
+    fclose(f);
+    return 1;
+}
+
 static const struct Literal literals[] = {
     { .key = "/quit", .function = &quit, },
     { .key = "/help", .function = &help, },
@@ -165,6 +185,8 @@ static const struct Literal literals[] = {
     { .key = "/add", .function = &addWord, },
     { .key = "/edit", .function = &editWord, },
     { .key = "/remove", .function = &removeWord, },
+    { .key = "/store", .function = &store, },
+    { .key = "/load", .function = &load, },
     { .key = "/tree", .function = &printTreeWrapper, },
     //{ .key = "", .function = &query, },
 };

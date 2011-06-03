@@ -139,7 +139,7 @@ void removeBinNode(struct BinTree *tree, struct BinNode **node)
     if (!node || !*node)
         return;
 
-    // FIXME: ugly hack
+    // we're gonna work with original pointer to pointer if it's not
     if ((*node)->parent) {
         node = ((*node)->parent->left == *node)
                ? &((*node)->parent->left)
@@ -219,6 +219,42 @@ void traversalPreorder(struct BinNode *root, void (*f)(struct BinNode *))
     }
     freeStack(&s);
 }
+
+void appendToFile(struct BinNode *node, FILE *f)
+{
+    if (!node)
+        return;
+    struct DictPair p;
+    memcpy(p.key, node->key, KEY_LENGTH);
+    memcpy(p.value, node->value, VALUE_LENGTH);
+    fwrite((void *)&p, sizeof(struct DictPair), 1, f);
+}
+
+void traversalToFile(struct BinNode *root, void (*func)\
+                                           (struct BinNode *, FILE *f))
+{
+    FILE *f = fopen(DICT_FILE, "wa");
+    struct Stack *s = createStack();
+    struct BinNode *node = root;
+    pushStack(s, node);
+    while (!isEmptyStack(s)) {
+        node = popStack(s);
+        func(node, f);
+        if (!node)
+            continue;
+        if (node->right)
+            pushStack(s, node->right);
+        else
+            func(NULL, f);
+        if (node->left)
+            pushStack(s, node->left);
+        else
+            func(NULL, f);
+    }
+    freeStack(&s);
+    fclose(f);
+}
+
 
 void traversalInorder(struct BinNode *root, void (*f)(struct BinNode *))
 {
