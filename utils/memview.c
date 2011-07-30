@@ -2,7 +2,7 @@
 
 typedef unsigned char u8;
 
-void printByte(u8 num)  // shows a byte in hexadecimal and binary numeral system
+void printByte(u8 num)  // shows a byte in bin and hex numeral system
 {
     u8 i, x;
 
