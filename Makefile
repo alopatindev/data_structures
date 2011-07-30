@@ -3,7 +3,7 @@ all:
 	gcc -Wall -Wno-unused-function -g heap/*.c -o heap/heaptest
 	gcc -Wall -Wno-unused-function -g rbtree/*.c -o rbtree/rbtreetest
 	gcc -Wall -Wno-unused-function -g smalldicty/*.c -o smalldicty/smalldicty
-	g++ -Wall -Wno-unused-function -g utils/memview.cpp -o utils/memview
+	gcc -Wall -Wno-unused-function -g utils/memview.c -o utils/memview
 
 clean:
 	rm -f bintree/bintreetest
