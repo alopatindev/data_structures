@@ -13,7 +13,7 @@ void printByte(u8 num)  // shows a byte in bin and hex numeral system
         printf("%d", (int)x);
     }
 
-    char buf[2];
+    char buf[3];
     sprintf(buf, "%2x", num);
     if (buf[0] == ' ')
         buf[0] = '0';
