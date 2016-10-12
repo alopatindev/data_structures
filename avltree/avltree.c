@@ -3,9 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-
-// see https://www.youtube.com/watch?v=FNeL18KsWPc&list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb&index=6
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -31,6 +28,7 @@ static void print_tree_internal(struct Node* root, int level) {
 
 void print_tree(struct Node* root) {
     print_tree_internal(root, 0);
+    printf("\n");
 }
 
 void free_tree(struct Node* root) {
@@ -63,8 +61,6 @@ static void update_height(struct Node* node) {
 }
 
 static void rotate_left(struct Node** root, struct Node* x) {
-    printf("\nrotate_left %d\n", x->data);
-
     struct Node* y = x->right;
     struct Node* b = y->left;
 
@@ -75,7 +71,7 @@ static void rotate_left(struct Node** root, struct Node* x) {
     if (x->parent != NULL) {
         if (x->parent->left == x) {
             x->parent->left = y;
-        } else if (x->parent->right == y) {
+        } else if (x->parent->right == x) {
             x->parent->right = y;
         } else {
             assert(false);
@@ -89,13 +85,9 @@ static void rotate_left(struct Node** root, struct Node* x) {
 
     update_height(x);
     update_height(y);
-
-    print_tree(*root);
 }
 
 static void rotate_right(struct Node** root, struct Node* y) {
-    printf("\nrotate_right %d\n", y->data);
-
     struct Node* x = y->left;
     struct Node* b = x->right;
 
@@ -120,8 +112,6 @@ static void rotate_right(struct Node** root, struct Node* y) {
 
     update_height(y);
     update_height(x);
-
-    print_tree(*root);
 }
 
 static int get_height(struct Node* node) {
@@ -139,9 +129,6 @@ static int get_height_diff(struct Node* node) {
 static void update_balance(struct Node** root, struct Node* node) {
     if (node != NULL) {
         int height_diff = get_height_diff(node);
-        if (abs(height_diff) > 1) {
-            printf("height_diff=%d", height_diff);
-        }
         if (height_diff > 1) {
             bool needs_double_rotation = node->height > 1 && get_height_diff(node->left) < 0;
             if (needs_double_rotation) {
@@ -151,7 +138,13 @@ static void update_balance(struct Node** root, struct Node* node) {
                 rotate_right(root, node);
             }
         } else if (height_diff < -1) {
-            rotate_left(root, node);
+            bool needs_double_rotation = node->height > 1 && get_height_diff(node->right) > 0;
+            if (needs_double_rotation) {
+                rotate_right(root, node->right);
+                rotate_left(root, node);
+            } else {
+                rotate_left(root, node);
+            }
         }
 
         update_balance(root, node->parent);
@@ -188,7 +181,6 @@ static void insert_internal(struct Node** root, struct Node* node, int data) {
 }
 
 void insert(struct Node** root, int data) {
-    printf("\ninsert %d\n", data);
     assert(root != NULL);
     insert_internal(root, *root, data);
 }
