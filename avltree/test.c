@@ -1,119 +1,152 @@
 #include "avltree.h"
-#include <assert.h>
+#include <math.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 // examples
 // https://www.youtube.com/watch?v=FNeL18KsWPc&list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb&index=6
 // http://www.coe.utah.edu/~clillywh/CS2420/HW7/
 
-void test_rotate_left() {
+static int tree_size(struct Node* root, int size) {
+    if (root != NULL) {
+        size++;
+        size = tree_size(root->left, size);
+        size = tree_size(root->right, size);
+    }
+
+    return size;
+}
+
+static bool tree_is_balanced(struct Node* root) {
+    // https://en.wikipedia.org/wiki/AVL_tree#Comparison_to_other_structures
+    double height = (double) (root->height + 1);
+    double n = (double) tree_size(root, 0);
+    double b = -0.328;
+    double c = 1.44;
+    return height < (c * log2(n + 2.0) + b);
+}
+
+void test_insert_rotate_left() {
     struct Node* root = NULL;
     insert(&root, 1);
     insert(&root, 2);
 
-    assert(1 == root->data);
-    assert(2 == root->right->data);
+    ASSERT(1 == root->data, root);
+    ASSERT(2 == root->right->data, root);
 
-    assert(1 == root->height);
-    assert(0 == root->right->height);
+    ASSERT(1 == root->height, root);
+    ASSERT(0 == root->right->height, root);
 
-    assert(NULL == root->parent);
-    assert(NULL == root->left);
-    assert(root == root->right->parent);
+    ASSERT(NULL == root->parent, root);
+    ASSERT(NULL == root->left, root);
+    ASSERT(root == root->right->parent, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     insert(&root, 3);
 
-    assert(2 == root->data);
-    assert(1 == root->left->data);
-    assert(3 == root->right->data);
+    ASSERT(2 == root->data, root);
+    ASSERT(1 == root->left->data, root);
+    ASSERT(3 == root->right->data, root);
 
-    assert(1 == root->height);
-    assert(0 == root->left->height);
-    assert(0 == root->right->height);
+    ASSERT(1 == root->height, root);
+    ASSERT(0 == root->left->height, root);
+    ASSERT(0 == root->right->height, root);
 
-    assert(NULL == root->parent);
-    assert(root == root->left->parent);
-    assert(root == root->right->parent);
+    ASSERT(NULL == root->parent, root);
+    ASSERT(root == root->left->parent, root);
+    ASSERT(root == root->right->parent, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     free_tree(root);
     root = NULL;
 }
 
-void test_rotate_right() {
+void test_insert_rotate_right() {
     struct Node* root = NULL;
     insert(&root, 5);
     insert(&root, 4);
 
-    assert(5 == root->data);
-    assert(4 == root->left->data);
+    ASSERT(5 == root->data, root);
+    ASSERT(4 == root->left->data, root);
 
-    assert(1 == root->height);
-    assert(0 == root->left->height);
+    ASSERT(1 == root->height, root);
+    ASSERT(0 == root->left->height, root);
 
-    assert(NULL == root->parent);
-    assert(root == root->left->parent);
+    ASSERT(NULL == root->parent, root);
+    ASSERT(root == root->left->parent, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     insert(&root, 3);
 
-    assert(4 == root->data);
-    assert(3 == root->left->data);
-    assert(5 == root->right->data);
+    ASSERT(4 == root->data, root);
+    ASSERT(3 == root->left->data, root);
+    ASSERT(5 == root->right->data, root);
 
-    assert(1 == root->height);
-    assert(0 == root->left->height);
-    assert(0 == root->right->height);
+    ASSERT(1 == root->height, root);
+    ASSERT(0 == root->left->height, root);
+    ASSERT(0 == root->right->height, root);
 
-    assert(NULL == root->parent);
-    assert(root == root->left->parent);
-    assert(root == root->right->parent);
+    ASSERT(NULL == root->parent, root);
+    ASSERT(root == root->left->parent, root);
+    ASSERT(root == root->right->parent, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     free_tree(root);
     root = NULL;
 }
 
-void test_rotate_left_right_simple() {
+void test_insert_rotate_left_right_simple() {
     struct Node* root = NULL;
     insert(&root, 3);
     insert(&root, 1);
     insert(&root, 2);
 
-    assert(2 == root->data);
-    assert(1 == root->left->data);
-    assert(3 == root->right->data);
+    ASSERT(2 == root->data, root);
+    ASSERT(1 == root->left->data, root);
+    ASSERT(3 == root->right->data, root);
 
-    assert(1 == root->height);
-    assert(0 == root->left->height);
-    assert(0 == root->right->height);
+    ASSERT(1 == root->height, root);
+    ASSERT(0 == root->left->height, root);
+    ASSERT(0 == root->right->height, root);
 
-    assert(2 == root->left->parent->data);
-    assert(2 == root->right->parent->data);
+    ASSERT(2 == root->left->parent->data, root);
+    ASSERT(2 == root->right->parent->data, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     free_tree(root);
     root = NULL;
 }
 
-void test_rotate_right_left_simple() {
+void test_insert_rotate_right_left_simple() {
     struct Node* root = NULL;
     insert(&root, 1);
     insert(&root, 3);
     insert(&root, 2);
 
-    assert(2 == root->data);
-    assert(1 == root->left->data);
-    assert(3 == root->right->data);
+    ASSERT(2 == root->data, root);
+    ASSERT(1 == root->left->data, root);
+    ASSERT(3 == root->right->data, root);
 
-    assert(1 == root->height);
-    assert(0 == root->left->height);
-    assert(0 == root->right->height);
+    ASSERT(1 == root->height, root);
+    ASSERT(0 == root->left->height, root);
+    ASSERT(0 == root->right->height, root);
 
-    assert(2 == root->left->parent->data);
-    assert(2 == root->right->parent->data);
+    ASSERT(2 == root->left->parent->data, root);
+    ASSERT(2 == root->right->parent->data, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     free_tree(root);
     root = NULL;
 }
 
-void test_complex() {
+void test_insert_complex() {
     struct Node* root = NULL;
     insert(&root, 41);
     insert(&root, 20);
@@ -123,68 +156,90 @@ void test_complex() {
     insert(&root, 50);
     insert(&root, 26);
 
-    assert(contains(root, 20));
-    assert(contains(root, 65));
-    assert(contains(root, 26));
-    assert(!contains(root, 123));
-    assert(!contains(root, 0));
+    ASSERT(contains(root, 20), root);
+    ASSERT(contains(root, 65), root);
+    ASSERT(contains(root, 26), root);
+    ASSERT(!contains(root, 123), root);
+    ASSERT(!contains(root, 0), root);
 
-    assert(41 == root->data);
-    assert(20 == root->left->data);
-    assert(65 == root->right->data);
-    assert(11 == root->left->left->data);
-    assert(29 == root->left->right->data);
-    assert(50 == root->right->left->data);
-    assert(26 == root->left->right->left->data);
+    ASSERT(41 == root->data, root);
+    ASSERT(20 == root->left->data, root);
+    ASSERT(65 == root->right->data, root);
+    ASSERT(11 == root->left->left->data, root);
+    ASSERT(29 == root->left->right->data, root);
+    ASSERT(50 == root->right->left->data, root);
+    ASSERT(26 == root->left->right->left->data, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     insert(&root, 23);
-    assert(26 == root->left->right->data);
-    assert(23 == root->left->right->left->data);
-    assert(29 == root->left->right->right->data);
+    ASSERT(26 == root->left->right->data, root);
+    ASSERT(23 == root->left->right->left->data, root);
+    ASSERT(29 == root->left->right->right->data, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     insert(&root, 55);
-    assert(41 == root->data);
-    assert(20 == root->left->data);
-    assert(55 == root->right->data);
-    assert(50 == root->right->left->data);
-    assert(65 == root->right->right->data);
+    ASSERT(41 == root->data, root);
+    ASSERT(20 == root->left->data, root);
+    ASSERT(55 == root->right->data, root);
+    ASSERT(50 == root->right->left->data, root);
+    ASSERT(65 == root->right->right->data, root);
 
-    assert(3 == root->height);
-    assert(2 == root->left->height);
-    assert(1 == root->right->height);
-    assert(0 == root->right->left->height);
-    assert(0 == root->right->right->height);
+    ASSERT(3 == root->height, root);
+    ASSERT(2 == root->left->height, root);
+    ASSERT(1 == root->right->height, root);
+    ASSERT(0 == root->right->left->height, root);
+    ASSERT(0 == root->right->right->height, root);
 
-    assert(41 == root->left->parent->data);
-    assert(41 == root->right->parent->data);
-    assert(20 == root->left->left->parent->data);
-    assert(20 == root->left->right->parent->data);
-    assert(55 == root->right->left->parent->data);
-    assert(55 == root->right->right->parent->data);
-    assert(26 == root->left->right->left->parent->data);
-    assert(26 == root->left->right->right->parent->data);
+    ASSERT(41 == root->left->parent->data, root);
+    ASSERT(41 == root->right->parent->data, root);
+    ASSERT(20 == root->left->left->parent->data, root);
+    ASSERT(20 == root->left->right->parent->data, root);
+    ASSERT(55 == root->right->left->parent->data, root);
+    ASSERT(55 == root->right->right->parent->data, root);
+    ASSERT(26 == root->left->right->left->parent->data, root);
+    ASSERT(26 == root->left->right->right->parent->data, root);
+
+    ASSERT(tree_is_balanced(root), root);
 
     free_tree(root);
     root = NULL;
 }
 
-void test_sequential_ascending() {
+void test_insert_sequential_ascending() {
     struct Node* root = NULL;
     for (int i = 0; i <= 100; i++) {
-        if (i == 4) {
-            print_tree(root);
-        }
         insert(&root, i);
+        ASSERT(tree_is_balanced(root), root);
     }
 
     free_tree(root);
     root = NULL;
 }
 
-void test_sequential_descending() {
+void test_insert_sequential_descending() {
     struct Node* root = NULL;
     for (int i = 100; i >= 0; i--) {
         insert(&root, i);
+        ASSERT(tree_is_balanced(root), root);
+    }
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_insert_random() {
+    struct Node* root = NULL;
+    for (int i = 0; i <= 10000; i++) {
+        int value = rand();
+        if (!contains(root, value)) {
+            insert(&root, value);
+            ASSERT(root->left == NULL || root->left->parent == root, root);
+            ASSERT(root->right == NULL || root->right->parent == root, root);
+            ASSERT(contains(root, value), root);
+        }
+        ASSERT(tree_is_balanced(root), root);
     }
 
     free_tree(root);
@@ -192,16 +247,17 @@ void test_sequential_descending() {
 }
 
 // TODO: remove
-// TODO: randomized input; check that tree is balanced
 
 int main()
 {
-    test_rotate_left();
-    test_rotate_right();
-    test_rotate_left_right_simple();
-    test_rotate_right_left_simple();
-    test_complex();
-    test_sequential_ascending();
-    test_sequential_descending();
+    srand(time(NULL));
+    test_insert_rotate_left();
+    test_insert_rotate_right();
+    test_insert_rotate_left_right_simple();
+    test_insert_rotate_right_left_simple();
+    test_insert_complex();
+    test_insert_sequential_ascending();
+    test_insert_sequential_descending();
+    test_insert_random();
     return 0;
 }

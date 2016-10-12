@@ -2,6 +2,14 @@
 #define AVLTREE_H
 
 #include <stdbool.h>
+#include <assert.h>
+
+#define ASSERT(expr, root) do { \
+    if (!(expr)) { \
+        print_tree((root)); \
+        assert(expr); \
+    } \
+} while (false)
 
 struct Node {
     int data;

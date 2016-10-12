@@ -1,5 +1,4 @@
 #include "avltree.h"
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -74,7 +73,7 @@ static void rotate_left(struct Node** root, struct Node* x) {
         } else if (x->parent->right == x) {
             x->parent->right = y;
         } else {
-            assert(false);
+            ASSERT(false, *root);
         }
     }
 
@@ -101,7 +100,8 @@ static void rotate_right(struct Node** root, struct Node* y) {
         } else if (y->parent->right == y) {
             y->parent->right = x;
         } else {
-            assert(false);
+            printf("y=%p (data=%d parent=%p)\n", (void *)y, y->data, (void *)y->parent);
+            ASSERT(false, *root);
         }
     }
 
@@ -157,7 +157,7 @@ static void insert_internal(struct Node** root, struct Node* node, int data) {
         return;
     }
 
-    assert(data != node->data);
+    ASSERT(data != node->data, *root);
 
     if (data < node->data) {
         if (node->left == NULL) {
@@ -181,7 +181,6 @@ static void insert_internal(struct Node** root, struct Node* node, int data) {
 }
 
 void insert(struct Node** root, int data) {
-    assert(root != NULL);
     insert_internal(root, *root, data);
 }
 
