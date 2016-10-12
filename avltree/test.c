@@ -29,6 +29,7 @@ static bool tree_is_balanced(struct Node* root) {
 
 void test_insert_rotate_left() {
     struct Node* root = NULL;
+
     insert(&root, 1);
     insert(&root, 2);
 
@@ -66,6 +67,7 @@ void test_insert_rotate_left() {
 
 void test_insert_rotate_right() {
     struct Node* root = NULL;
+
     insert(&root, 5);
     insert(&root, 4);
 
@@ -102,6 +104,7 @@ void test_insert_rotate_right() {
 
 void test_insert_rotate_left_right_simple() {
     struct Node* root = NULL;
+
     insert(&root, 3);
     insert(&root, 1);
     insert(&root, 2);
@@ -125,6 +128,7 @@ void test_insert_rotate_left_right_simple() {
 
 void test_insert_rotate_right_left_simple() {
     struct Node* root = NULL;
+
     insert(&root, 1);
     insert(&root, 3);
     insert(&root, 2);
@@ -146,8 +150,33 @@ void test_insert_rotate_right_left_simple() {
     root = NULL;
 }
 
-void test_insert_complex() {
+void test_insert_sequential_ascending() {
     struct Node* root = NULL;
+
+    for (int i = 0; i <= 100; i++) {
+        insert(&root, i);
+        ASSERT(tree_is_balanced(root), root);
+    }
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_insert_sequential_descending() {
+    struct Node* root = NULL;
+
+    for (int i = 100; i >= 0; i--) {
+        insert(&root, i);
+        ASSERT(tree_is_balanced(root), root);
+    }
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_insert_complex_1() {
+    struct Node* root = NULL;
+
     insert(&root, 41);
     insert(&root, 20);
     insert(&root, 65);
@@ -207,23 +236,32 @@ void test_insert_complex() {
     root = NULL;
 }
 
-void test_insert_sequential_ascending() {
+void test_insert_complex_2() {
     struct Node* root = NULL;
-    for (int i = 0; i <= 100; i++) {
-        insert(&root, i);
-        ASSERT(tree_is_balanced(root), root);
-    }
 
-    free_tree(root);
-    root = NULL;
-}
+    insert(&root, 50);
+    insert(&root, 46);
+    insert(&root, 92);
+    insert(&root, 83);
+    insert(&root, 16);
+    insert(&root, 99);
+    insert(&root, 43);
+    insert(&root, 38);
+    insert(&root, 26);
+    insert(&root, 15);
+    insert(&root, 39);
+    insert(&root, 65);
+    insert(&root, 45);
+    insert(&root, 51);
+    insert(&root, 79);
+    insert(&root, 37);
+    insert(&root, 35);
+    insert(&root, 28);
+    insert(&root, 60);
+    insert(&root, 78);
+    insert(&root, 76);
 
-void test_insert_sequential_descending() {
-    struct Node* root = NULL;
-    for (int i = 100; i >= 0; i--) {
-        insert(&root, i);
-        ASSERT(tree_is_balanced(root), root);
-    }
+    ASSERT(tree_is_balanced(root), root);
 
     free_tree(root);
     root = NULL;
@@ -231,14 +269,17 @@ void test_insert_sequential_descending() {
 
 void test_insert_random() {
     struct Node* root = NULL;
+
     for (int i = 0; i <= 10000; i++) {
         int value = rand();
+
         if (!contains(root, value)) {
             insert(&root, value);
             ASSERT(root->left == NULL || root->left->parent == root, root);
             ASSERT(root->right == NULL || root->right->parent == root, root);
             ASSERT(contains(root, value), root);
         }
+
         ASSERT(tree_is_balanced(root), root);
     }
 
@@ -255,9 +296,10 @@ int main()
     test_insert_rotate_right();
     test_insert_rotate_left_right_simple();
     test_insert_rotate_right_left_simple();
-    test_insert_complex();
     test_insert_sequential_ascending();
     test_insert_sequential_descending();
+    test_insert_complex_1();
+    test_insert_complex_2();
     test_insert_random();
     return 0;
 }

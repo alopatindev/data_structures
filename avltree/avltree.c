@@ -13,13 +13,13 @@ static struct Node* new_node(int data) {
 
 static void print_tree_internal(struct Node* root, int level) {
     for (int i = 0; i < level; i++) {
-        printf(" ");
+        printf("   ");
     }
 
     if (root == NULL) {
         printf("(null)\n");
     } else {
-        printf("%d (height=%d)\n", root->data, root->height);
+        printf("%d (height=%d parent=%p parent->data=%d)\n", root->data, root->height, (void *) root->parent, root->parent ? root->parent->data : -1);
         print_tree_internal(root->left, level + 1);
         print_tree_internal(root->right, level + 1);
     }
@@ -77,6 +77,10 @@ static void rotate_left(struct Node** root, struct Node* x) {
         }
     }
 
+    if (b != NULL) {
+        b->parent = x;
+    }
+
     y->parent = x->parent;
     y->left = x;
     x->parent = y;
@@ -100,9 +104,12 @@ static void rotate_right(struct Node** root, struct Node* y) {
         } else if (y->parent->right == y) {
             y->parent->right = x;
         } else {
-            printf("y=%p (data=%d parent=%p)\n", (void *)y, y->data, (void *)y->parent);
             ASSERT(false, *root);
         }
+    }
+
+    if (b != NULL) {
+        b->parent = y;
     }
 
     x->parent = y->parent;
