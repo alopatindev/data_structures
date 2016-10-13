@@ -216,7 +216,7 @@ struct Node* find_min(struct Node* root) {
     }
 }
 
-void remove_leaf(struct Node** root, struct Node* node) {
+static void remove_leaf(struct Node** root, struct Node* node) {
     struct Node* parent = node->parent;
 
     swap_parent(root, node, NULL);
@@ -228,7 +228,7 @@ void remove_leaf(struct Node** root, struct Node* node) {
     free(node);
 }
 
-void remove_node_with_left_child(struct Node** root, struct Node* node) {
+static void remove_node_with_left_child(struct Node** root, struct Node* node) {
     struct Node* child = node->left;
 
     swap_parent(root, node, child);
@@ -239,7 +239,7 @@ void remove_node_with_left_child(struct Node** root, struct Node* node) {
     free(node);
 }
 
-void remove_node_with_right_child(struct Node** root, struct Node* node) {
+static void remove_node_with_right_child(struct Node** root, struct Node* node) {
     struct Node* child = node->right;
 
     swap_parent(root, node, child);
@@ -250,7 +250,7 @@ void remove_node_with_right_child(struct Node** root, struct Node* node) {
     free(node);
 }
 
-void remove_node_with_both_children(struct Node** root, struct Node* node) {
+static void remove_node_with_both_children(struct Node** root, struct Node* node) {
     struct Node* child = find_min(node->right);
     ASSERT(child != NULL, *root);
 

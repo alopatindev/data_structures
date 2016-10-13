@@ -8,6 +8,11 @@
 // https://www.youtube.com/watch?v=FNeL18KsWPc&list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb&index=6
 // http://www.coe.utah.edu/~clillywh/CS2420/HW7/
 
+#define BUILD_TREE(items) \
+    for (size_t i = 0; i < sizeof(items) / sizeof(items[0]); i++) { \
+        insert(&root, items[i]); \
+    }
+
 static bool tree_is_balanced(int tree_size, int tree_height) {
     // https://en.wikipedia.org/wiki/AVL_tree#Comparison_to_other_structures
     if (tree_size == 0) {
@@ -33,20 +38,7 @@ static void compute_tree_properties(struct Node* root, int* size, int* height, i
     }
 }
 
-static void test_tree_properties(struct Node* root) {
-    int tree_size = 0;
-    int tree_height = 0;
-    const int root_height = root != NULL ? root->height : -1;
-    compute_tree_properties(root, &tree_size, &tree_height, 0);
-    ASSERT(tree_height == root_height + 1, root);
-    ASSERT(tree_is_balanced(tree_size, tree_height), root);
-}
-
 static void test_parent(struct Node* root, struct Node* node) {
-    if (node == NULL) {
-        return;
-    }
-
     if (node->parent == NULL) {
         ASSERT(root == node, root);
     } else {
@@ -65,6 +57,24 @@ static void test_parent(struct Node* root, struct Node* node) {
     }
 }
 
+static void test_all_parents(struct Node* root, struct Node* node) {
+    if (node != NULL) {
+        test_parent(root, node);
+        test_all_parents(root, node->left);
+        test_all_parents(root, node->right);
+    }
+}
+
+static void test_tree_properties(struct Node* root) {
+    int tree_size = 0;
+    int tree_height = 0;
+    const int root_height = root != NULL ? root->height : -1;
+    compute_tree_properties(root, &tree_size, &tree_height, 0);
+    ASSERT(tree_height == root_height + 1, root);
+    ASSERT(tree_is_balanced(tree_size, tree_height), root);
+    test_all_parents(root, root);
+}
+
 void test_insert_rotate_left() {
     struct Node* root = NULL;
 
@@ -73,9 +83,6 @@ void test_insert_rotate_left() {
 
     ASSERT(1 == root->data, root);
     ASSERT(2 == root->right->data, root);
-
-    test_parent(root, root);
-    test_parent(root, root->right);
 
     test_tree_properties(root);
 
@@ -88,10 +95,6 @@ void test_insert_rotate_left() {
     ASSERT(1 == root->height, root);
     ASSERT(0 == root->left->height, root);
     ASSERT(0 == root->right->height, root);
-
-    test_parent(root, root);
-    test_parent(root, root->left);
-    test_parent(root, root->right);
 
     test_tree_properties(root);
 
@@ -111,10 +114,6 @@ void test_insert_rotate_right() {
     ASSERT(1 == root->height, root);
     ASSERT(0 == root->left->height, root);
 
-    test_parent(root, root);
-    test_parent(root, root->left);
-    test_parent(root, root->right);
-
     test_tree_properties(root);
 
     insert(&root, 3);
@@ -126,10 +125,6 @@ void test_insert_rotate_right() {
     ASSERT(1 == root->height, root);
     ASSERT(0 == root->left->height, root);
     ASSERT(0 == root->right->height, root);
-
-    test_parent(root, root);
-    test_parent(root, root->left);
-    test_parent(root, root->right);
 
     test_tree_properties(root);
 
@@ -152,10 +147,6 @@ void test_insert_rotate_left_right_simple() {
     ASSERT(0 == root->left->height, root);
     ASSERT(0 == root->right->height, root);
 
-    test_parent(root, root);
-    test_parent(root, root->left);
-    test_parent(root, root->right);
-
     test_tree_properties(root);
 
     free_tree(root);
@@ -176,10 +167,6 @@ void test_insert_rotate_right_left_simple() {
     ASSERT(1 == root->height, root);
     ASSERT(0 == root->left->height, root);
     ASSERT(0 == root->right->height, root);
-
-    test_parent(root, root);
-    test_parent(root, root->left);
-    test_parent(root, root->right);
 
     test_tree_properties(root);
 
@@ -223,13 +210,8 @@ void test_insert_complex_1() {
     struct Node* root = NULL;
     test_tree_properties(root);
 
-    insert(&root, 41);
-    insert(&root, 20);
-    insert(&root, 65);
-    insert(&root, 11);
-    insert(&root, 29);
-    insert(&root, 50);
-    insert(&root, 26);
+    int items[] = {41, 20, 65, 11, 29, 50, 26};
+    BUILD_TREE(items);
 
     ASSERT(contains(root, 20), root);
     ASSERT(contains(root, 65), root);
@@ -267,16 +249,6 @@ void test_insert_complex_1() {
     ASSERT(0 == root->right->left->height, root);
     ASSERT(0 == root->right->right->height, root);
 
-    test_parent(root, root);
-    test_parent(root, root->left);
-    test_parent(root, root->right);
-    test_parent(root, root->left->left);
-    test_parent(root, root->left->right);
-    test_parent(root, root->right->left);
-    test_parent(root, root->right->right);
-    test_parent(root, root->left->right->left);
-    test_parent(root, root->left->right->right);
-
     test_tree_properties(root);
 
     free_tree(root);
@@ -286,27 +258,8 @@ void test_insert_complex_1() {
 void test_insert_complex_2() {
     struct Node* root = NULL;
 
-    insert(&root, 50);
-    insert(&root, 46);
-    insert(&root, 92);
-    insert(&root, 83);
-    insert(&root, 16);
-    insert(&root, 99);
-    insert(&root, 43);
-    insert(&root, 38);
-    insert(&root, 26);
-    insert(&root, 15);
-    insert(&root, 39);
-    insert(&root, 65);
-    insert(&root, 45);
-    insert(&root, 51);
-    insert(&root, 79);
-    insert(&root, 37);
-    insert(&root, 35);
-    insert(&root, 28);
-    insert(&root, 60);
-    insert(&root, 78);
-    insert(&root, 76);
+    int items[] = {50, 46, 92, 83, 16, 99, 43, 38, 26, 15, 39, 65, 45, 51, 79, 37, 35, 28, 60, 78, 76};
+    BUILD_TREE(items);
 
     test_tree_properties(root);
 
@@ -367,12 +320,8 @@ void test_remove_leaf() {
 void test_remove_node_with_left_child() {
     struct Node* root = NULL;
 
-    insert(&root, 41);
-    insert(&root, 20);
-    insert(&root, 65);
-    insert(&root, 11);
-    insert(&root, 29);
-    insert(&root, 50);
+    int items[] = {41, 20, 65, 11, 29, 50};
+    BUILD_TREE(items);
 
     ASSERT(41 == root->data, root);
     ASSERT(20 == root->left->data, root);
@@ -382,9 +331,9 @@ void test_remove_node_with_left_child() {
     ASSERT(50 == root->right->left->data, root);
 
     remove_node(&root, 65);
+    ASSERT(!contains(root, 65), root);
 
     test_tree_properties(root);
-    ASSERT(!contains(root, 65), root);
 
     ASSERT(41 == root->data, root);
     ASSERT(20 == root->left->data, root);
@@ -399,12 +348,8 @@ void test_remove_node_with_left_child() {
 void test_remove_node_with_right_child() {
     struct Node* root = NULL;
 
-    insert(&root, 41);
-    insert(&root, 20);
-    insert(&root, 65);
-    insert(&root, 11);
-    insert(&root, 29);
-    insert(&root, 70);
+    int items[] = {41, 20, 65, 11, 29, 70};
+    BUILD_TREE(items);
 
     ASSERT(41 == root->data, root);
     ASSERT(20 == root->left->data, root);
@@ -437,12 +382,8 @@ void test_remove_node_with_right_child() {
 void test_remove_node_with_both_children_without_rebalance() {
     struct Node* root = NULL;
 
-    insert(&root, 41);
-    insert(&root, 20);
-    insert(&root, 65);
-    insert(&root, 11);
-    insert(&root, 29);
-    insert(&root, 50);
+    int items[] = {41, 20, 65, 11, 29, 50};
+    BUILD_TREE(items);
 
     ASSERT(41 == root->data, root);
     ASSERT(20 == root->left->data, root);
@@ -452,9 +393,9 @@ void test_remove_node_with_both_children_without_rebalance() {
     ASSERT(50 == root->right->left->data, root);
 
     remove_node(&root, 41);
+    ASSERT(!contains(root, 41), root);
 
     test_tree_properties(root);
-    ASSERT(!contains(root, 41), root);
 
     ASSERT(50 == root->data, root);
     ASSERT(20 == root->left->data, root);
@@ -462,33 +403,21 @@ void test_remove_node_with_both_children_without_rebalance() {
     ASSERT(29 == root->left->right->data, root);
     ASSERT(65 == root->right->data, root);
 
-    test_parent(root, root);
-    test_parent(root, root->left);
-    test_parent(root, root->right);
-    test_parent(root, root->left->left);
-    test_parent(root, root->left->right);
-
     free_tree(root);
     root = NULL;
 }
 
+// FIXME: invalid test?
 void test_remove_node_with_both_children_with_rebalance() {
     struct Node* root = NULL;
 
-    insert(&root, 50);
-    insert(&root, 45);
-    insert(&root, 92);
-    insert(&root, 26);
-    insert(&root, 46);
-    insert(&root, 83);
-    insert(&root, 99);
-    insert(&root, 16);
-    insert(&root, 38);
+    int items[] = {50, 45, 92, 26, 46, 83, 99, 16, 38};
+    BUILD_TREE(items);
 
     remove_node(&root, 45);
+    ASSERT(!contains(root, 45), root);
 
     test_tree_properties(root);
-    ASSERT(!contains(root, 45), root);
 
     ASSERT(50 == root->data, root);
     ASSERT(26 == root->left->data, root);
@@ -498,15 +427,6 @@ void test_remove_node_with_both_children_with_rebalance() {
     ASSERT(83 == root->right->left->data, root);
     ASSERT(99 == root->right->right->data, root);
     ASSERT(38 == root->left->right->left->data, root);
-
-    test_parent(root, root);
-    test_parent(root, root->left);
-    test_parent(root, root->right);
-    test_parent(root, root->left->left);
-    test_parent(root, root->left->right);
-    test_parent(root, root->right->left);
-    test_parent(root, root->right->right);
-    test_parent(root, root->left->right->left);
 
     free_tree(root);
     root = NULL;
@@ -550,15 +470,8 @@ void test_remove_random() {
 void test_find_min() {
     struct Node* root = NULL;
 
-    insert(&root, 50);
-    insert(&root, 45);
-    insert(&root, 92);
-    insert(&root, 26);
-    insert(&root, 46);
-    insert(&root, 83);
-    insert(&root, 99);
-    insert(&root, 16);
-    insert(&root, 38);
+    int items[] = {50, 45, 92, 26, 46, 83, 99, 16, 38};
+    BUILD_TREE(items);
 
     test_tree_properties(root);
 
@@ -568,6 +481,24 @@ void test_find_min() {
     ASSERT(46 == find_min(root->left->right)->data, root);
     ASSERT(83 == find_min(root->right->left)->data, root);
     ASSERT(NULL == find_min(NULL), NULL);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex() {
+    struct Node* root = NULL;
+
+    int items[] = {86, 27, 75, 41, 64, 88, 11, 50, 28, 30};
+    BUILD_TREE(items);
+
+    test_tree_properties(root);
+
+    remove_node(&root, 30);
+    remove_node(&root, 75);
+    remove_node(&root, 88);
+
+    test_tree_properties(root);
 
     free_tree(root);
     root = NULL;
@@ -593,7 +524,8 @@ int main()
     test_remove_node_with_left_child();
     test_remove_node_with_right_child();
     test_remove_node_with_both_children_without_rebalance();
-    test_remove_node_with_both_children_with_rebalance();
+    // test_remove_node_with_both_children_with_rebalance();
+    test_remove_complex();
     test_remove_random();
 
     return 0;
