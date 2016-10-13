@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <assert.h>
 
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
 #define ASSERT(expr, root) do { \
     if (!(expr)) { \
         print_tree((root)); \

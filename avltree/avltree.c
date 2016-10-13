@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-
 static struct Node* new_node(int data) {
     struct Node* root = (struct Node*) calloc(1, sizeof(struct Node));
     root->data = data;
