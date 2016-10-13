@@ -321,16 +321,16 @@ void test_remove_leaf() {
     ASSERT(contains(root, 1), root);
     test_tree_properties(root);
 
-    remove_node(&root, 2);
-    ASSERT(!contains(root, 2), root);
+    remove_node(&root, 1);
+    ASSERT(!contains(root, 1), root);
     ASSERT(!contains(root, 3), root);
-    ASSERT(contains(root, 1), root);
+    ASSERT(contains(root, 2), root);
     test_tree_properties(root);
 
-    remove_node(&root, 1);
+    remove_node(&root, 2);
     ASSERT(!contains(root, 2), root);
-    ASSERT(!contains(root, 3), root);
     ASSERT(!contains(root, 1), root);
+    ASSERT(!contains(root, 3), root);
     test_tree_properties(root);
 
     free_tree(root);
@@ -459,6 +459,15 @@ void test_remove_node_with_two_children_with_rebalance() {
     ASSERT(83 == root->right->left->data, root);
     ASSERT(99 == root->right->right->data, root);
     ASSERT(38 == root->left->right->left->data, root);
+
+    ASSERT(NULL == root->parent, root);
+    ASSERT(50 == root->left->parent->data, root);
+    ASSERT(50 == root->right->parent->data, root);
+    ASSERT(26 == root->left->left->parent->data, root);
+    ASSERT(26 == root->left->right->parent->data, root);
+    ASSERT(92 == root->right->left->parent->data, root);
+    ASSERT(92 == root->right->right->parent->data, root);
+    ASSERT(46 == root->left->right->left->parent->data, root);
 
     free_tree(root);
     root = NULL;

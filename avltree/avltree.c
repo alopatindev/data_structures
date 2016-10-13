@@ -202,7 +202,15 @@ bool contains(struct Node* root, int data) {
 }
 
 static struct Node* find_node(struct Node* root, int data) {
-    return NULL;
+    if (root == NULL) {
+        return NULL;
+    } else if (root->data == data) {
+        return root;
+    } else if (data < root->data) {
+        return find_node(root->left, data);
+    } else {
+        return find_node(root->right, data);
+    }
 }
 
 struct Node* find_min(struct Node* root) {
@@ -216,4 +224,31 @@ struct Node* find_min(struct Node* root) {
 }
 
 void remove_node(struct Node** root, int data) {
+    struct Node* node = find_node(*root, data);
+    ASSERT(node != NULL, *root);
+    const bool is_root = node == *root;
+
+    if (node->left == NULL && node->right == NULL) {
+        struct Node* parent = node->parent;
+
+        if (parent != NULL) {
+            if (node == parent->left) {
+                parent->left = NULL;
+            } else if (node == parent->right) {
+                parent->right = NULL;
+            } else {
+                ASSERT(false, *root);
+            }
+
+            update_height(parent);
+        }
+
+        if (is_root) {
+            *root = NULL;
+        }
+
+        free(node);
+    } else {
+        assert(false);
+    }
 }
