@@ -10,11 +10,17 @@
 
 static bool tree_is_balanced(int tree_size, int tree_height) {
     // https://en.wikipedia.org/wiki/AVL_tree#Comparison_to_other_structures
+    if (tree_size == 0) {
+        return true;
+    }
+
     double height = (double) tree_height;
     double n = (double) tree_size;
     double b = -0.328;
     double c = 1.44;
-    return height < (c * log2(n + 2.0) + b);
+    double d = 1.07;
+
+    return height <= (c * log2(n + d) + b);
 }
 
 static void compute_tree_properties(struct Node* root, int* size, int* height, int level) {
@@ -302,11 +308,201 @@ void test_insert_random() {
     root = NULL;
 }
 
-// TODO: remove
+void test_remove_leaf() {
+    struct Node* root = NULL;
+
+    insert(&root, 2);
+    insert(&root, 1);
+    insert(&root, 3);
+
+    remove_node(&root, 3);
+    ASSERT(!contains(root, 3), root);
+    ASSERT(contains(root, 2), root);
+    ASSERT(contains(root, 1), root);
+    test_tree_properties(root);
+
+    remove_node(&root, 2);
+    ASSERT(!contains(root, 2), root);
+    ASSERT(!contains(root, 3), root);
+    ASSERT(contains(root, 1), root);
+    test_tree_properties(root);
+
+    remove_node(&root, 1);
+    ASSERT(!contains(root, 2), root);
+    ASSERT(!contains(root, 3), root);
+    ASSERT(!contains(root, 1), root);
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_node_with_left_child() {
+    struct Node* root = NULL;
+
+    insert(&root, 41);
+    insert(&root, 20);
+    insert(&root, 65);
+    insert(&root, 11);
+    insert(&root, 29);
+    insert(&root, 50);
+
+    ASSERT(41 == root->data, root);
+    ASSERT(20 == root->left->data, root);
+    ASSERT(65 == root->right->data, root);
+    ASSERT(11 == root->left->left->data, root);
+    ASSERT(29 == root->left->right->data, root);
+    ASSERT(50 == root->right->left->data, root);
+
+    remove_node(&root, 65);
+
+    test_tree_properties(root);
+    ASSERT(!contains(root, 65), root);
+
+    ASSERT(41 == root->data, root);
+    ASSERT(20 == root->left->data, root);
+    ASSERT(11 == root->left->left->data, root);
+    ASSERT(29 == root->left->right->data, root);
+    ASSERT(50 == root->right->data, root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_node_with_right_child() {
+    struct Node* root = NULL;
+
+    insert(&root, 41);
+    insert(&root, 20);
+    insert(&root, 65);
+    insert(&root, 11);
+    insert(&root, 29);
+    insert(&root, 70);
+
+    ASSERT(41 == root->data, root);
+    ASSERT(20 == root->left->data, root);
+    ASSERT(65 == root->right->data, root);
+    ASSERT(11 == root->left->left->data, root);
+    ASSERT(29 == root->left->right->data, root);
+    ASSERT(70 == root->right->right->data, root);
+
+    remove_node(&root, 65);
+
+    test_tree_properties(root);
+    ASSERT(!contains(root, 65), root);
+
+    ASSERT(41 == root->data, root);
+    ASSERT(20 == root->left->data, root);
+    ASSERT(11 == root->left->left->data, root);
+    ASSERT(29 == root->left->right->data, root);
+    ASSERT(70 == root->right->data, root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_node_with_two_children_without_rebalance() {
+    struct Node* root = NULL;
+
+    insert(&root, 41);
+    insert(&root, 20);
+    insert(&root, 65);
+    insert(&root, 11);
+    insert(&root, 29);
+    insert(&root, 50);
+
+    ASSERT(41 == root->data, root);
+    ASSERT(20 == root->left->data, root);
+    ASSERT(65 == root->right->data, root);
+    ASSERT(11 == root->left->left->data, root);
+    ASSERT(29 == root->left->right->data, root);
+    ASSERT(50 == root->right->left->data, root);
+
+    remove_node(&root, 41);
+
+    test_tree_properties(root);
+    ASSERT(!contains(root, 41), root);
+
+    ASSERT(50 == root->data, root);
+    ASSERT(20 == root->left->data, root);
+    ASSERT(11 == root->left->left->data, root);
+    ASSERT(29 == root->left->right->data, root);
+    ASSERT(65 == root->right->data, root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_node_with_two_children_with_rebalance() {
+    struct Node* root = NULL;
+
+    insert(&root, 50);
+    insert(&root, 45);
+    insert(&root, 92);
+    insert(&root, 26);
+    insert(&root, 46);
+    insert(&root, 83);
+    insert(&root, 99);
+    insert(&root, 16);
+    insert(&root, 38);
+
+    remove_node(&root, 45);
+
+    test_tree_properties(root);
+    ASSERT(!contains(root, 45), root);
+
+    ASSERT(50 == root->data, root);
+    ASSERT(26 == root->left->data, root);
+    ASSERT(92 == root->right->data, root);
+    ASSERT(16 == root->left->left->data, root);
+    ASSERT(46 == root->left->right->data, root);
+    ASSERT(83 == root->right->left->data, root);
+    ASSERT(99 == root->right->right->data, root);
+    ASSERT(38 == root->left->right->left->data, root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_random() {
+    #define N 100
+
+    bool added[N] = {false};
+    struct Node* root = NULL;
+
+    for (int i = 0; i <= 10000; i++) {
+        int value = rand() % N;
+
+        if (!added[value]) {
+            insert(&root, value);
+            added[value] = true;
+            ASSERT(contains(root, value), root);
+        }
+    }
+
+    test_tree_properties(root);
+
+    for (int i = 0; i <= 10000; i++) {
+        int value = rand() % N;
+
+        if (added[value]) {
+            remove_node(&root, value);
+            added[value] = false;
+            ASSERT(!contains(root, value), root);
+            test_tree_properties(root);
+        }
+    }
+
+    free_tree(root);
+    root = NULL;
+
+    #undef N
+}
 
 int main()
 {
     srand(time(NULL));
+
     test_insert_rotate_left();
     test_insert_rotate_right();
     test_insert_rotate_left_right_simple();
@@ -316,5 +512,13 @@ int main()
     test_insert_complex_1();
     test_insert_complex_2();
     test_insert_random();
+
+    test_remove_leaf();
+    test_remove_node_with_left_child();
+    test_remove_node_with_right_child();
+    test_remove_node_with_two_children_without_rebalance();
+    test_remove_node_with_two_children_with_rebalance();
+    test_remove_random();
+
     return 0;
 }
