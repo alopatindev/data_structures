@@ -499,6 +499,32 @@ void test_remove_random() {
     #undef N
 }
 
+void test_find_min() {
+    struct Node* root = NULL;
+
+    insert(&root, 50);
+    insert(&root, 45);
+    insert(&root, 92);
+    insert(&root, 26);
+    insert(&root, 46);
+    insert(&root, 83);
+    insert(&root, 99);
+    insert(&root, 16);
+    insert(&root, 38);
+
+    test_tree_properties(root);
+
+    ASSERT(16 == find_min(root)->data, root);
+    ASSERT(16 == find_min(root->left)->data, root);
+    ASSERT(83 == find_min(root->right)->data, root);
+    ASSERT(46 == find_min(root->left->right)->data, root);
+    ASSERT(83 == find_min(root->right->left)->data, root);
+    ASSERT(NULL == find_min(NULL), NULL);
+
+    free_tree(root);
+    root = NULL;
+}
+
 int main()
 {
     srand(time(NULL));
@@ -512,6 +538,8 @@ int main()
     test_insert_complex_1();
     test_insert_complex_2();
     test_insert_random();
+
+    test_find_min();
 
     test_remove_leaf();
     test_remove_node_with_left_child();

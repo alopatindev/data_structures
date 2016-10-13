@@ -201,5 +201,19 @@ bool contains(struct Node* root, int data) {
     }
 }
 
+static struct Node* find_node(struct Node* root, int data) {
+    return NULL;
+}
+
+struct Node* find_min(struct Node* root) {
+    if (root == NULL) {
+        return NULL;
+    } else if (root->left != NULL) {
+        return find_min(root->left);
+    } else {
+        return root;
+    }
+}
+
 void remove_node(struct Node** root, int data) {
 }
