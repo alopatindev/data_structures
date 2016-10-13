@@ -57,29 +57,38 @@ static void update_height(struct Node* node) {
     }
 }
 
+static void swap_parent(struct Node** root, struct Node* node, struct Node* other) {
+    const bool is_root = node == *root;
+
+    if (node != NULL && node->parent != NULL) {
+        if (node == node->parent->left) {
+            node->parent->left = other;
+        } else if (node == node->parent->right) {
+            node->parent->right = other;
+        } else {
+            assert(false);
+        }
+    }
+
+    if (other != NULL) {
+        other->parent = node->parent;
+    }
+
+    if (is_root) {
+        *root = other;
+    }
+}
+
 static void rotate_left(struct Node** root, struct Node* x) {
     struct Node* y = x->right;
     struct Node* b = y->left;
 
-    if (x == *root) {
-        *root = y;
-    }
-
-    if (x->parent != NULL) {
-        if (x->parent->left == x) {
-            x->parent->left = y;
-        } else if (x->parent->right == x) {
-            x->parent->right = y;
-        } else {
-            ASSERT(false, *root);
-        }
-    }
+    swap_parent(root, x, y);
 
     if (b != NULL) {
         b->parent = x;
     }
 
-    y->parent = x->parent;
     y->left = x;
     x->parent = y;
     x->right = b;
@@ -92,25 +101,12 @@ static void rotate_right(struct Node** root, struct Node* y) {
     struct Node* x = y->left;
     struct Node* b = x->right;
 
-    if (y == *root) {
-        *root = x;
-    }
-
-    if (y->parent != NULL) {
-        if (y->parent->left == y) {
-            y->parent->left = x;
-        } else if (y->parent->right == y) {
-            y->parent->right = x;
-        } else {
-            ASSERT(false, *root);
-        }
-    }
+    swap_parent(root, y, x);
 
     if (b != NULL) {
         b->parent = y;
     }
 
-    x->parent = y->parent;
     y->parent = x;
     y->left = b;
     x->right = y;
@@ -216,50 +212,25 @@ struct Node* find_min(struct Node* root) {
 }
 
 void remove_leaf(struct Node** root, struct Node* node) {
-    const bool is_root = node == *root;
     struct Node* parent = node->parent;
 
+    swap_parent(root, node, NULL);
+
     if (parent != NULL) {
-        if (node == parent->left) {
-            parent->left = NULL;
-        } else if (node == parent->right) {
-            parent->right = NULL;
-        } else {
-            ASSERT(false, *root);
-        }
-
         update_height(parent);
-    }
-
-    if (is_root) {
-        *root = NULL;
     }
 
     free(node);
 }
 
 void remove_node_with_left_child(struct Node** root, struct Node* node) {
-    const bool is_root = node == *root;
     struct Node* child = node->left;
 
-    if (node->parent != NULL) {
-        if (node == node->parent->left) {
-            node->parent->left = child;
-        } else if (node == node->parent->right) {
-            node->parent->right = child;
-        } else {
-            ASSERT(false, *root);
-        }
-    }
+    swap_parent(root, node, child);
 
     node->left = NULL;
     child->left = node->left;
     child->right = node->right;
-    child->parent = node->parent;
-
-    if (is_root) {
-        *root = child;
-    }
 
     free(node);
 }
