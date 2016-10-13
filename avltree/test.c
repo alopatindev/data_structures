@@ -424,6 +424,12 @@ void test_remove_node_with_right_child() {
     ASSERT(29 == root->left->right->data, root);
     ASSERT(70 == root->right->data, root);
 
+    ASSERT(2 == root->height, root);
+    ASSERT(1 == root->left->height, root);
+    ASSERT(0 == root->left->left->height, root);
+    ASSERT(0 == root->left->right->height, root);
+    ASSERT(0 == root->right->height, root);
+
     free_tree(root);
     root = NULL;
 }
@@ -455,6 +461,12 @@ void test_remove_node_with_both_children_without_rebalance() {
     ASSERT(11 == root->left->left->data, root);
     ASSERT(29 == root->left->right->data, root);
     ASSERT(65 == root->right->data, root);
+
+    test_parent(root, root);
+    test_parent(root, root->left);
+    test_parent(root, root->right);
+    test_parent(root, root->left->left);
+    test_parent(root, root->left->right);
 
     free_tree(root);
     root = NULL;
@@ -506,7 +518,7 @@ void test_remove_random() {
     bool added[N] = {false};
     struct Node* root = NULL;
 
-    for (int i = 0; i <= 10000; i++) {
+    for (int i = 0; i <= N * N; i++) {
         int value = rand() % N;
 
         if (!added[value]) {
@@ -518,7 +530,7 @@ void test_remove_random() {
 
     test_tree_properties(root);
 
-    for (int i = 0; i <= 10000; i++) {
+    for (int i = 0; i <= N * N; i++) {
         int value = rand() % N;
 
         if (added[value]) {

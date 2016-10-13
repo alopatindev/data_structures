@@ -17,7 +17,12 @@ static void print_tree_internal(struct Node* root, int level) {
     if (root == NULL) {
         printf("(null)\n");
     } else {
-        printf("%d (height=%d parent=%p parent->data=%d)\n", root->data, root->height, (void *) root->parent, root->parent ? root->parent->data : -1);
+        printf("%d (%p height=%d parent=%p parent->data=%d)\n",
+                root->data,
+                (void*) root,
+                root->height,
+                (void*) root->parent,
+                root->parent != NULL ? root->parent->data : -1);
         print_tree_internal(root->left, level + 1);
         print_tree_internal(root->right, level + 1);
     }
@@ -228,19 +233,70 @@ void remove_node_with_left_child(struct Node** root, struct Node* node) {
 
     swap_parent(root, node, child);
 
-    node->left = NULL;
-    child->left = node->left;
+    child->left = NULL;
     child->right = node->right;
 
     free(node);
 }
 
 void remove_node_with_right_child(struct Node** root, struct Node* node) {
-    assert(false);
+    struct Node* child = node->right;
+
+    swap_parent(root, node, child);
+
+    child->left = node->left;
+    child->right = NULL;
+
+    free(node);
 }
 
 void remove_node_with_both_children(struct Node** root, struct Node* node) {
-    assert(false);
+    struct Node* right_min_child = find_min(node->right);
+    ASSERT(right_min_child != NULL, *root);
+
+    if (right_min_child->parent != NULL) {
+        if (right_min_child->parent->left == right_min_child) {
+            right_min_child->parent->left = NULL;
+        } else if (right_min_child->parent->right == right_min_child) {
+            right_min_child->parent->right = NULL;
+        } else {
+            assert(false);
+        }
+    }
+
+    if (node->parent != NULL) {
+        if (node->parent->left == node) {
+            node->parent->left = right_min_child;
+        } else if (node->parent->right == node) {
+            node->parent->right = right_min_child;
+        } else {
+            assert(false);
+        }
+    }
+
+    right_min_child->parent = node->parent;
+    right_min_child->left = node->left;
+    right_min_child->right = node->right;
+
+    if (right_min_child->left != NULL) {
+        right_min_child->left->parent = right_min_child;
+    }
+
+    if (right_min_child->right != NULL) {
+        right_min_child->right->parent = right_min_child;
+    }
+
+    if (right_min_child->left != NULL) {
+        update_height(right_min_child->left);
+    } else if (right_min_child->left != NULL) {
+        update_height(right_min_child->right);
+    }
+
+    if (node == *root) {
+        *root = right_min_child;
+    }
+
+    free(node);
 }
 
 void remove_node(struct Node** root, int data) {
