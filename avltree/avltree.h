@@ -27,6 +27,7 @@ void free_tree(struct Node* root);
 void insert(struct Node** root, int data);
 void remove_node(struct Node** root, int data);
 bool contains(struct Node* root, int data);
+struct Node* find_node(struct Node* root, int data);
 struct Node* find_min(struct Node* root);
 
 #endif

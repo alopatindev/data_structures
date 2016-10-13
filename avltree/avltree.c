@@ -189,19 +189,7 @@ void insert(struct Node** root, int data) {
     insert_internal(root, *root, data);
 }
 
-bool contains(struct Node* root, int data) {
-    if (root == NULL) {
-        return false;
-    } else {
-        if (data == root->data) {
-            return true;
-        } else {
-            return contains(root->left, data) || contains(root->right, data);
-        }
-    }
-}
-
-static struct Node* find_node(struct Node* root, int data) {
+struct Node* find_node(struct Node* root, int data) {
     if (root == NULL) {
         return NULL;
     } else if (root->data == data) {
@@ -211,6 +199,10 @@ static struct Node* find_node(struct Node* root, int data) {
     } else {
         return find_node(root->right, data);
     }
+}
+
+bool contains(struct Node* root, int data) {
+    return find_node(root, data) != NULL;
 }
 
 struct Node* find_min(struct Node* root) {
@@ -223,32 +215,74 @@ struct Node* find_min(struct Node* root) {
     }
 }
 
+void remove_leaf(struct Node** root, struct Node* node) {
+    const bool is_root = node == *root;
+    struct Node* parent = node->parent;
+
+    if (parent != NULL) {
+        if (node == parent->left) {
+            parent->left = NULL;
+        } else if (node == parent->right) {
+            parent->right = NULL;
+        } else {
+            ASSERT(false, *root);
+        }
+
+        update_height(parent);
+    }
+
+    if (is_root) {
+        *root = NULL;
+    }
+
+    free(node);
+}
+
+void remove_node_with_left_child(struct Node** root, struct Node* node) {
+    const bool is_root = node == *root;
+    struct Node* child = node->left;
+
+    if (node->parent != NULL) {
+        if (node == node->parent->left) {
+            node->parent->left = child;
+        } else if (node == node->parent->right) {
+            node->parent->right = child;
+        } else {
+            ASSERT(false, *root);
+        }
+    }
+
+    node->left = NULL;
+    child->left = node->left;
+    child->right = node->right;
+    child->parent = node->parent;
+
+    if (is_root) {
+        *root = child;
+    }
+
+    free(node);
+}
+
+void remove_node_with_right_child(struct Node** root, struct Node* node) {
+    assert(false);
+}
+
+void remove_node_with_both_children(struct Node** root, struct Node* node) {
+    assert(false);
+}
+
 void remove_node(struct Node** root, int data) {
     struct Node* node = find_node(*root, data);
     ASSERT(node != NULL, *root);
-    const bool is_root = node == *root;
 
     if (node->left == NULL && node->right == NULL) {
-        struct Node* parent = node->parent;
-
-        if (parent != NULL) {
-            if (node == parent->left) {
-                parent->left = NULL;
-            } else if (node == parent->right) {
-                parent->right = NULL;
-            } else {
-                ASSERT(false, *root);
-            }
-
-            update_height(parent);
-        }
-
-        if (is_root) {
-            *root = NULL;
-        }
-
-        free(node);
+        remove_leaf(root, node);
+    } else if (node->left != NULL && node->right == NULL) {
+        remove_node_with_left_child(root, node);
+    } else if (node->left == NULL && node->right != NULL) {
+        remove_node_with_right_child(root, node);
     } else {
-        assert(false);
+        remove_node_with_both_children(root, node);
     }
 }
