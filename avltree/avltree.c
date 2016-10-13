@@ -251,49 +251,28 @@ void remove_node_with_right_child(struct Node** root, struct Node* node) {
 }
 
 void remove_node_with_both_children(struct Node** root, struct Node* node) {
-    struct Node* right_min_child = find_min(node->right);
-    ASSERT(right_min_child != NULL, *root);
+    struct Node* child = find_min(node->right);
+    ASSERT(child != NULL, *root);
 
-    if (right_min_child->parent != NULL) {
-        if (right_min_child->parent->left == right_min_child) {
-            right_min_child->parent->left = NULL;
-        } else if (right_min_child->parent->right == right_min_child) {
-            right_min_child->parent->right = NULL;
-        } else {
-            assert(false);
-        }
+    swap_parent(root, child, NULL);
+    swap_parent(root, node, child);
+
+    child->parent = node->parent;
+    child->left = node->left;
+    child->right = node->right;
+
+    if (child->left != NULL) {
+        child->left->parent = child;
     }
 
-    if (node->parent != NULL) {
-        if (node->parent->left == node) {
-            node->parent->left = right_min_child;
-        } else if (node->parent->right == node) {
-            node->parent->right = right_min_child;
-        } else {
-            assert(false);
-        }
+    if (child->right != NULL) {
+        child->right->parent = child;
     }
 
-    right_min_child->parent = node->parent;
-    right_min_child->left = node->left;
-    right_min_child->right = node->right;
-
-    if (right_min_child->left != NULL) {
-        right_min_child->left->parent = right_min_child;
-    }
-
-    if (right_min_child->right != NULL) {
-        right_min_child->right->parent = right_min_child;
-    }
-
-    if (right_min_child->left != NULL) {
-        update_height(right_min_child->left);
-    } else if (right_min_child->left != NULL) {
-        update_height(right_min_child->right);
-    }
-
-    if (node == *root) {
-        *root = right_min_child;
+    if (child->left != NULL) {
+        update_height(child->left);
+    } else if (child->left != NULL) {
+        update_height(child->right);
     }
 
     free(node);
