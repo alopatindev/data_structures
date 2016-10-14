@@ -407,26 +407,16 @@ void test_remove_node_with_both_children_without_rebalance() {
     root = NULL;
 }
 
-// FIXME: invalid test?
-void test_remove_node_with_both_children_with_rebalance() {
+void test_remove_leaf_with_rebalance() {
     struct Node* root = NULL;
 
-    int items[] = {50, 45, 92, 26, 46, 83, 99, 16, 38};
+    int items[] = {6, 5, 7, 4};
     BUILD_TREE(items);
 
-    remove_node(&root, 45);
-    ASSERT(!contains(root, 45), root);
+    remove_node(&root, 7);
+    ASSERT(!contains(root, 7), root);
 
     test_tree_properties(root);
-
-    ASSERT(50 == root->data, root);
-    ASSERT(26 == root->left->data, root);
-    ASSERT(92 == root->right->data, root);
-    ASSERT(16 == root->left->left->data, root);
-    ASSERT(46 == root->left->right->data, root);
-    ASSERT(83 == root->right->left->data, root);
-    ASSERT(99 == root->right->right->data, root);
-    ASSERT(38 == root->left->right->left->data, root);
 
     free_tree(root);
     root = NULL;
@@ -438,27 +428,27 @@ void test_remove_random() {
     bool added[N] = {false};
     struct Node* root = NULL;
 
-    for (int i = 0; i <= N * N; i++) {
+    bool add = false;
+    for (int i = 0; i <= N * N * N; i++) {
         int value = rand() % N;
 
-        if (!added[value]) {
+        if (i % 5 == 0) {
+            add = (rand() % 2) == 0;
+        }
+
+        if (add && !added[value]) {
             insert(&root, value);
             added[value] = true;
             ASSERT(contains(root, value), root);
         }
-    }
 
-    test_tree_properties(root);
-
-    for (int i = 0; i <= N * N; i++) {
-        int value = rand() % N;
-
-        if (added[value]) {
+        if (!add && added[value]) {
             remove_node(&root, value);
             added[value] = false;
             ASSERT(!contains(root, value), root);
-            test_tree_properties(root);
         }
+
+        test_tree_properties(root);
     }
 
     free_tree(root);
@@ -486,7 +476,7 @@ void test_find_min() {
     root = NULL;
 }
 
-void test_remove_complex() {
+void test_remove_complex_1() {
     struct Node* root = NULL;
 
     int items[] = {86, 27, 75, 41, 64, 88, 11, 50, 28, 30};
@@ -497,6 +487,165 @@ void test_remove_complex() {
     remove_node(&root, 30);
     remove_node(&root, 75);
     remove_node(&root, 88);
+
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex_2() {
+    struct Node* root = NULL;
+
+    int items[] = {60, 44, 69, 67, 91, 89, 98};
+    BUILD_TREE(items);
+
+    remove_node(&root, 69);
+    remove_node(&root, 91);
+
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex_3() {
+    struct Node* root = NULL;
+
+    int items[] = {75, 85, 30, 14, 15, 23, 12};
+    BUILD_TREE(items);
+
+    remove_node(&root, 85);
+    remove_node(&root, 15);
+    remove_node(&root, 75);
+    remove_node(&root, 23);
+
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex_4() {
+    struct Node* root = NULL;
+
+    int items[] = {44, 96, 76, 45, 20, 16, 28};
+    BUILD_TREE(items);
+
+    remove_node(&root, 20);
+    remove_node(&root, 45);
+    remove_node(&root, 28);
+    remove_node(&root, 76);
+
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex_5() {
+    struct Node* root = NULL;
+
+    int items[] = {72, 76, 35, 56, 91, 20, 22, 27};
+    BUILD_TREE(items);
+
+    remove_node(&root, 27);
+    remove_node(&root, 20);
+    remove_node(&root, 91);
+    remove_node(&root, 72);
+    remove_node(&root, 35);
+    remove_node(&root, 76);
+
+    remove_node(&root, 56);
+    remove_node(&root, 22);
+
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex_root() {
+    struct Node* root = NULL;
+
+    int items[] = {72, 42, 58, 71, 39, 62, 30, 17, 67};
+    BUILD_TREE(items);
+
+    remove_node(&root, 58);
+    ASSERT(71 == root->right->data, root);
+    ASSERT(72 == root->right->right->data, root);
+    ASSERT(67 == root->right->left->data, root);
+    remove_node(&root, 71);
+
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex_non_root() {
+    struct Node* root = NULL;
+
+    int items[] = {62, 39, 71, 30, 42, 67, 72};
+    BUILD_TREE(items);
+
+    remove_node(&root, 71);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex_6() {
+    struct Node* root = NULL;
+
+    int items[] = {63, 85, 26, 15, 19, 4, 73, 60, 83};
+    BUILD_TREE(items);
+
+    remove_node(&root, 26);
+    remove_node(&root, 19);
+    test_tree_properties(root);
+    remove_node(&root, 63);
+    remove_node(&root, 4);
+    remove_node(&root, 60);
+    remove_node(&root, 15);
+    remove_node(&root, 85);
+
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_remove_complex_7() {
+    struct Node* root = NULL;
+    int items[] = {11, 22, 45, 69, 52, 46, 71, 51, 75};
+
+    BUILD_TREE(items);
+    test_tree_properties(root);
+
+    int removable[] = {45, 69, 75, 11, 71, 51};
+
+    for (size_t i = 0; i < sizeof(removable) / sizeof(removable[0]); i++) {
+        remove_node(&root, removable[i]);
+    }
+
+    test_tree_properties(root);
+
+    free_tree(root);
+    root = NULL;
+}
+
+void test_balance_after_removal() {
+    struct Node* root = NULL;
+    int items[] = {55, 33, 82, 47, 27, 86, 69, 25, 59};
+    BUILD_TREE(items);
+    test_tree_properties(root);
+
+    int removable[] = {55, 27};
+
+    for (size_t i = 0; i < sizeof(removable) / sizeof(removable[0]); i++) {
+        remove_node(&root, removable[i]);
+    }
 
     test_tree_properties(root);
 
@@ -524,8 +673,17 @@ int main()
     test_remove_node_with_left_child();
     test_remove_node_with_right_child();
     test_remove_node_with_both_children_without_rebalance();
-    // test_remove_node_with_both_children_with_rebalance();
-    test_remove_complex();
+    test_remove_leaf_with_rebalance();
+    test_remove_complex_1();
+    test_remove_complex_2();
+    test_remove_complex_3();
+    test_remove_complex_4();
+    test_remove_complex_5();
+    test_remove_complex_6();
+    test_remove_complex_7();
+    test_remove_complex_root();
+    test_remove_complex_non_root();
+    test_balance_after_removal();
     test_remove_random();
 
     return 0;

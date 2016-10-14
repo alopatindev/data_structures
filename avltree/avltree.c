@@ -217,13 +217,10 @@ struct Node* find_min(struct Node* root) {
 }
 
 static void remove_leaf(struct Node** root, struct Node* node) {
-    struct Node* parent = node->parent;
-
     swap_parent(root, node, NULL);
 
-    if (parent != NULL) {
-        update_height(parent);
-    }
+    update_height(node);
+    update_balance(root, node);
 
     free(node);
 }
@@ -233,8 +230,11 @@ static void remove_node_with_left_child(struct Node** root, struct Node* node) {
 
     swap_parent(root, node, child);
 
-    child->left = NULL;
     child->right = node->right;
+
+    struct Node* lowest = child->right != NULL ? child->right : child;
+    update_height(lowest);
+    update_balance(root, lowest);
 
     free(node);
 }
@@ -245,36 +245,108 @@ static void remove_node_with_right_child(struct Node** root, struct Node* node) 
     swap_parent(root, node, child);
 
     child->left = node->left;
-    child->right = NULL;
+
+    struct Node* lowest = child->left != NULL ? child->left : child;
+    update_height(lowest);
+    update_balance(root, lowest);
 
     free(node);
 }
 
-static void remove_node_with_both_children(struct Node** root, struct Node* node) {
-    struct Node* child = find_min(node->right);
+static struct Node* swap_and_separate_nodes(struct Node** root, struct Node* node, struct Node* child) {
     ASSERT(child != NULL, *root);
 
-    swap_parent(root, child, NULL);
-    swap_parent(root, node, child);
+    assert(NULL == child->left);
 
-    child->parent = node->parent;
-    child->left = node->left;
-    child->right = node->right;
+    // separate child
+    child->right = NULL;
+    if (child->parent->left == child) {
+        child->parent->left = NULL;
+    } else if (child->parent->right == child) {
+        child->parent->right = NULL;
+    } else {
+        assert(false);
+    }
+    child->parent = NULL;
 
-    if (child->left != NULL) {
-        child->left->parent = child;
+    struct Node* replaced_node = child;
+    child = NULL;
+
+    // separate node (1)
+    node->left = NULL;
+    node->right = NULL;
+
+    // replace node with child
+    if (node->parent != NULL) {
+        if (node->parent->left == node) {
+            node->parent->left = replaced_node;
+        } else if (node->parent->right == node) {
+            node->parent->right = replaced_node;
+        } else {
+            assert(false);
+        }
     }
 
-    if (child->right != NULL) {
-        child->right->parent = child;
+    if (node == *root) {
+        *root = replaced_node;
     }
 
-    if (child->left != NULL) {
-        update_height(child->left);
-    } else if (child->left != NULL) {
-        update_height(child->right);
+    // separate node (2)
+    node->parent = NULL;
+
+    return replaced_node;
+}
+
+static void remove_node_with_both_children(struct Node** root, struct Node* node) {
+    struct Node* child = find_min(node->right);
+
+    struct Node* node_left = node->left;
+    struct Node* node_right = node->right;
+    struct Node* node_parent = node->parent;
+    struct Node* child_left = child->left;
+    struct Node* child_right = child->right;
+    struct Node* child_parent = child->parent;
+
+    ASSERT(NULL == child_left, *root);
+
+    struct Node* replaced_node = swap_and_separate_nodes(root, node, child);
+
+    replaced_node->left =
+        node_left == replaced_node
+        ? NULL : node_left;
+
+    replaced_node->right =
+        node_right == replaced_node
+        ? child_right : node_right;
+
+    replaced_node->parent = node_parent;
+
+    if (replaced_node->left != NULL) {
+        replaced_node->left->parent = replaced_node;
     }
 
+    if (replaced_node->right != NULL) {
+        replaced_node->right->parent = replaced_node;
+    }
+
+    if (child_right != NULL && child_parent != node) {
+        child_parent->left = child_right;
+        child_right->parent = child_parent;
+    }
+
+	if (child_right != NULL) {
+        update_height(child_right);
+        update_balance(root, child_right);
+    } else {
+        update_height(child_parent);
+        update_balance(root, child_parent);
+    }
+
+    update_height(replaced_node->left);
+    update_height(replaced_node->right);
+    update_balance(root, replaced_node);
+
+    ASSERT(node != NULL, *root);
     free(node);
 }
 
