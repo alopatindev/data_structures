@@ -26,9 +26,9 @@ static bool tree_is_balanced(int tree_size, int tree_height) {
     double n = (double) tree_size;
     double b = -0.328;
     double c = 1.44;
-    double d = 1.07;
+    double rhs = c * log2(n + 2.0) + b;
 
-    return height <= (c * log2(n + d) + b);
+    return height < rhs;
 }
 
 static void compute_tree_properties(struct Node* root, int* size, int* height, int level) {
@@ -653,6 +653,15 @@ void test_balance_after_removal() {
     root = NULL;
 }
 
+void test_remove_single() {
+    struct Node* root = NULL;
+    insert(&root, 1);
+    test_tree_properties(root);
+    remove_node(&root, 1);
+    test_tree_properties(root);
+    ASSERT(NULL == root, root);
+}
+
 int main()
 {
     srand(time(NULL));
@@ -669,6 +678,7 @@ int main()
 
     test_find_min();
 
+    test_remove_single();
     test_remove_leaf();
     test_remove_node_with_left_child();
     test_remove_node_with_right_child();
