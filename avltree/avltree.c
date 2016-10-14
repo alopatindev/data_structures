@@ -334,7 +334,7 @@ static void remove_node_with_both_children(struct Node** root, struct Node* node
         child_right->parent = child_parent;
     }
 
-	if (child_right != NULL) {
+    if (child_right != NULL) {
         update_height(child_right);
         update_balance(root, child_right);
     } else {

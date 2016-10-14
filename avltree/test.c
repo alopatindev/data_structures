@@ -8,10 +8,13 @@
 // https://www.youtube.com/watch?v=FNeL18KsWPc&list=PLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb&index=6
 // http://www.coe.utah.edu/~clillywh/CS2420/HW7/
 
-#define BUILD_TREE(items) \
-    for (size_t i = 0; i < sizeof(items) / sizeof(items[0]); i++) { \
-        insert(&root, items[i]); \
+#define FOREACH(xs, func) \
+    for (size_t i = 0; i < sizeof(xs) / sizeof(xs[0]); i++) { \
+        func(&root, xs[i]); \
     }
+
+#define BUILD_TREE(xs) FOREACH(xs, insert)
+#define REMOVE_NODES(xs) FOREACH(xs, remove_node)
 
 static bool tree_is_balanced(int tree_size, int tree_height) {
     // https://en.wikipedia.org/wiki/AVL_tree#Comparison_to_other_structures
@@ -451,6 +454,8 @@ void test_remove_random() {
         test_tree_properties(root);
     }
 
+    print_tree(root);
+
     free_tree(root);
     root = NULL;
 
@@ -484,9 +489,8 @@ void test_remove_complex_1() {
 
     test_tree_properties(root);
 
-    remove_node(&root, 30);
-    remove_node(&root, 75);
-    remove_node(&root, 88);
+    int removable[] = {30, 75, 88};
+    REMOVE_NODES(removable);
 
     test_tree_properties(root);
 
@@ -499,6 +503,8 @@ void test_remove_complex_2() {
 
     int items[] = {60, 44, 69, 67, 91, 89, 98};
     BUILD_TREE(items);
+
+    test_tree_properties(root);
 
     remove_node(&root, 69);
     remove_node(&root, 91);
@@ -515,10 +521,10 @@ void test_remove_complex_3() {
     int items[] = {75, 85, 30, 14, 15, 23, 12};
     BUILD_TREE(items);
 
-    remove_node(&root, 85);
-    remove_node(&root, 15);
-    remove_node(&root, 75);
-    remove_node(&root, 23);
+    test_tree_properties(root);
+
+    int removable[] = {85, 15, 75, 23};
+    REMOVE_NODES(removable);
 
     test_tree_properties(root);
 
@@ -532,10 +538,10 @@ void test_remove_complex_4() {
     int items[] = {44, 96, 76, 45, 20, 16, 28};
     BUILD_TREE(items);
 
-    remove_node(&root, 20);
-    remove_node(&root, 45);
-    remove_node(&root, 28);
-    remove_node(&root, 76);
+    test_tree_properties(root);
+
+    int removable[] = {20, 45, 28, 76};
+    REMOVE_NODES(removable);
 
     test_tree_properties(root);
 
@@ -549,15 +555,10 @@ void test_remove_complex_5() {
     int items[] = {72, 76, 35, 56, 91, 20, 22, 27};
     BUILD_TREE(items);
 
-    remove_node(&root, 27);
-    remove_node(&root, 20);
-    remove_node(&root, 91);
-    remove_node(&root, 72);
-    remove_node(&root, 35);
-    remove_node(&root, 76);
+    test_tree_properties(root);
 
-    remove_node(&root, 56);
-    remove_node(&root, 22);
+    int removable[] = {27, 20, 91, 72, 35, 76, 56, 22};
+    REMOVE_NODES(removable);
 
     test_tree_properties(root);
 
@@ -570,6 +571,8 @@ void test_remove_complex_root() {
 
     int items[] = {72, 42, 58, 71, 39, 62, 30, 17, 67};
     BUILD_TREE(items);
+
+    test_tree_properties(root);
 
     remove_node(&root, 58);
     ASSERT(71 == root->right->data, root);
@@ -589,7 +592,11 @@ void test_remove_complex_non_root() {
     int items[] = {62, 39, 71, 30, 42, 67, 72};
     BUILD_TREE(items);
 
+    test_tree_properties(root);
+
     remove_node(&root, 71);
+
+    test_tree_properties(root);
 
     free_tree(root);
     root = NULL;
@@ -601,14 +608,10 @@ void test_remove_complex_6() {
     int items[] = {63, 85, 26, 15, 19, 4, 73, 60, 83};
     BUILD_TREE(items);
 
-    remove_node(&root, 26);
-    remove_node(&root, 19);
     test_tree_properties(root);
-    remove_node(&root, 63);
-    remove_node(&root, 4);
-    remove_node(&root, 60);
-    remove_node(&root, 15);
-    remove_node(&root, 85);
+
+    int removable[] = {26, 19, 63, 4, 60, 15, 85};
+    REMOVE_NODES(removable);
 
     test_tree_properties(root);
 
@@ -618,16 +621,14 @@ void test_remove_complex_6() {
 
 void test_remove_complex_7() {
     struct Node* root = NULL;
-    int items[] = {11, 22, 45, 69, 52, 46, 71, 51, 75};
 
+    int items[] = {11, 22, 45, 69, 52, 46, 71, 51, 75};
     BUILD_TREE(items);
+
     test_tree_properties(root);
 
     int removable[] = {45, 69, 75, 11, 71, 51};
-
-    for (size_t i = 0; i < sizeof(removable) / sizeof(removable[0]); i++) {
-        remove_node(&root, removable[i]);
-    }
+    REMOVE_NODES(removable);
 
     test_tree_properties(root);
 
@@ -637,15 +638,14 @@ void test_remove_complex_7() {
 
 void test_balance_after_removal() {
     struct Node* root = NULL;
+
     int items[] = {55, 33, 82, 47, 27, 86, 69, 25, 59};
     BUILD_TREE(items);
+
     test_tree_properties(root);
 
     int removable[] = {55, 27};
-
-    for (size_t i = 0; i < sizeof(removable) / sizeof(removable[0]); i++) {
-        remove_node(&root, removable[i]);
-    }
+    REMOVE_NODES(removable);
 
     test_tree_properties(root);
 
@@ -684,6 +684,7 @@ int main()
     test_remove_complex_root();
     test_remove_complex_non_root();
     test_balance_after_removal();
+
     test_remove_random();
 
     return 0;
