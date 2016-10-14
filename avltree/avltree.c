@@ -260,39 +260,17 @@ static struct Node* swap_and_separate_nodes(struct Node** root, struct Node* nod
 
     // separate child
     child->right = NULL;
-    if (child->parent->left == child) {
-        child->parent->left = NULL;
-    } else if (child->parent->right == child) {
-        child->parent->right = NULL;
-    } else {
-        assert(false);
-    }
-    child->parent = NULL;
+    swap_parent(root, child, NULL);
 
     struct Node* replaced_node = child;
     child = NULL;
 
-    // separate node (1)
+    // separate node
     node->left = NULL;
     node->right = NULL;
 
     // replace node with child
-    if (node->parent != NULL) {
-        if (node->parent->left == node) {
-            node->parent->left = replaced_node;
-        } else if (node->parent->right == node) {
-            node->parent->right = replaced_node;
-        } else {
-            assert(false);
-        }
-    }
-
-    if (node == *root) {
-        *root = replaced_node;
-    }
-
-    // separate node (2)
-    node->parent = NULL;
+    swap_parent(root, node, replaced_node);
 
     return replaced_node;
 }
@@ -310,6 +288,7 @@ static void remove_node_with_both_children(struct Node** root, struct Node* node
     ASSERT(NULL == child_left, *root);
 
     struct Node* replaced_node = swap_and_separate_nodes(root, node, child);
+    ASSERT(child == replaced_node, *root);
 
     replaced_node->left =
         node_left == replaced_node
